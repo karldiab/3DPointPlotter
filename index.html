@@ -3,7 +3,9 @@
 <head>
 	<title>3D Points Plotter</title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" media="screen">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel=stylesheet href="css/base.css"/>
 </head>
 <body>
@@ -22,113 +24,61 @@
 <link rel=stylesheet href="css/jquery-ui.css" />
 <link rel=stylesheet href="css/info.css"/>
 <script src="js/info.js"></script>
+
 <div id="infoButton"></div>
 <div id="infoBox" title="Demo Information">
 3D points plotter built in THREEjs
 </div>
-<!-- ------------------------------------------------------------ -->
-
-<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
-<script>
-/*
-	3D Points Plotter
-	Author - Karl Diab
- */
-
-	
-// standard global variables
-var container, scene, camera, renderer, controls, stats;
-var keyboard = new THREEx.KeyboardState();
-var clock = new THREE.Clock();
-
-// custom global variables
-var cube;
-
-// initialization
-init();
-
-// animation loop
-animate();
-	
-function init() 
-{
-
-	scene = new THREE.Scene();
-
-	// set the view size in pixels (custom or according to window size)
-	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
-	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
-	// camera attributes
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
-	// set up camera
-	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-	// add the camera to the scene
-	scene.add(camera);
-
-	camera.position.set(0,150,100);
-	
-	if ( Detector.webgl )
-		renderer = new THREE.WebGLRenderer( {antialias:true} );
-	else
-		renderer = new THREE.CanvasRenderer(); 
-	
-	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	container = document.getElementById( 'ThreeJS' );
-	container.appendChild( renderer.domElement );
-	THREEx.WindowResize(renderer, camera);
-	// toggle full-screen on given key press
-	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
-	controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-	// GEOMETRY 
-	//creates basic black mesh for points
-	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
-	//array of points
-	var pointsArray = [[0,0,0],[0,0,10],[0,10,10],[0,10,0],[10,0,0],[10,0,10],[10,10,0],[10,10,10]]
-	//loop that goes through and plots all the points
-	for (var i = 0; i < pointsArray.length; i++) {
-		var cubeGeometry = new THREE.CubeGeometry( 1, 1, 1);
-		// using THREE.MeshFaceMaterial() in the constructor below
-		//   causes the mesh to use the materials stored in the geometry
-		cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-		cube.position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
-		scene.add( cube );	
-	}
-	//axis pointers
-	var axes = new THREE.AxisHelper(100);
-	scene.add( axes );
 
 
-	// SKY
+	<div class="container">
+			<div class="row">
+				<div class="col-xs-12">
+					<h1>3D Points Plotter</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="centered">
+						<div id="ThreeJS"></div>
+						<script src="js/main.js"></script>
+					</div>
+				</div>
+					<div class="col-md-6" style="padding: 50px;">
+						<div class="row">
+								<textarea name="pointsInput" id="pointsInput" cols="30" rows="10"></textarea>
+								<button class="btn btn-primary" onclick="enterPoints()">Enter Points</button>
+								<textarea name="pointsOutput" id="pointsOutput" cols="30" rows="10"></textarea>
+						</div>
+						<div class="row" style="padding: 25px;">
+						<div class="col-xs-12">
+							<div class="btn-group">
+								<button class="btn btn-primary" onclick="toggleDebug();">Toggle Text</button>
+								<button class="btn btn-success" onclick="changeShape(0);">Cube</button>
+								<button class="btn btn-success" onclick="changeShape(1);">Dodecahedron</button>
+							</div>
+						</div>
+						</div>
+					
+				<div class="row">
+					<div class="col-xs-12">
+						<h4>Author: Karl Diab</h4>
+						<h5>Completed 25 November 2015</h5>
+						<p>A simple engine that builds 3D objects and displays them from a variable vantage point.
+							Built entirely in JavaScript with no additional libraries. The purpose of this project
+							was to better understand the mechanics of more advanced graphics libraries. Feel free 
+							the use the source code but please give credit where it is due.
+						</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<a href="https://github.com/karldiab/JS3DRenderEngine/"><button class="btn btn-primary">Source Code</button></a>
+				</div>
+			</div>
+		</div>
 
-	// skybox
-	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	// scene.add(skyBox);
-	
-	// fog must be added to scene before first render
-	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-}
 
-function animate() 
-{
-    requestAnimationFrame( animate );
-	render();		
-	update();
-}
-
-function update()
-{
-	controls.update();
-}
-
-function render() 
-{	
-	renderer.render( scene, camera );
-}
-
-</script>
 
 </body>
 </html>
