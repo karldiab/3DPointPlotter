@@ -20,13 +20,35 @@ init();
 animate();
 
 function enterPoints() {
-	for (var i =0; i < pointsArray.length;i++) {
+	/*for (var i =0; i < pointsArray.length;i++) {
 		//scene.removeObject(pointsArray[i]);
-	}
+	}*/
 	pointsArray = new Array();
 	var input = document.getElementById("pointsInput").value;
-	var splitArray = input.split(",");
-	for (var i = 0;i < splitArray.length;i += 3) {
+	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
+	var pointsArray = new Array()
+	var subArray = new Array();
+	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
+	while (input.length > 0) {
+		//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
+		while (input.length > 0 && isNaN(input.charAt(0))) {
+			input = input.substr(1);
+			
+		}
+		var numberHolder = "";
+		while (input.length > 0 && (input.charAt(0) === '.' || !isNaN(input.charAt(0)))) {
+			numberHolder += "" + input.charAt(0);
+			input = input.substr(1);
+			
+		}
+		subArray.push(numberHolder);
+		if (subArray.length == 3) {
+			pointsArray.push(subArray);
+			subArray = new Array();
+		}
+	}
+	
+	/*for (var i = 0;i < splitArray.length;i += 3) {
 		for (var s = 0;s < 3;s++) {
 			var subArray = new Array();
 			subArray.push(splitArray[i]);
@@ -35,8 +57,13 @@ function enterPoints() {
 		} 
 		
 		pointsArray.push(splitArray);
+	}*/
+	//scene = new THREE.Scene();
+	var outputString = "";
+	for (var i = 0; i < pointsArray.length; i++) {
+		outputString += i + " [" + pointsArray[i] + "]\n";
 	}
-	scene = new THREE.Scene();
+	document.getElementById("pointsOutput").innerHTML = "" + outputString;
 	plotPoints();
 	
 
