@@ -3,12 +3,13 @@
 	Author - Karl Diab
  */
 
-	
+//$( document ).ready(function() {	
 // standard global variables
 var container, scene, camera, renderer, controls, stats;
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 var pointsArray = [[0,0,0],[0,0,10],[0,10,10],[0,10,0],[10,0,0],[10,0,10],[10,10,0],[10,10,10]];
+var objectArray = new Array();
 
 // custom global variables
 var cube;
@@ -26,7 +27,6 @@ function enterPoints() {
 	pointsArray = new Array();
 	var input = document.getElementById("pointsInput").value;
 	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
-	var pointsArray = new Array()
 	var subArray = new Array();
 	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 	while (input.length > 0) {
@@ -48,17 +48,6 @@ function enterPoints() {
 		}
 	}
 	
-	/*for (var i = 0;i < splitArray.length;i += 3) {
-		for (var s = 0;s < 3;s++) {
-			var subArray = new Array();
-			subArray.push(splitArray[i]);
-			subArray.push(splitArray[i+1]);
-			subArray.push(splitArray[i+2]);
-		} 
-		
-		pointsArray.push(splitArray);
-	}*/
-	//scene = new THREE.Scene();
 	var outputString = "";
 	for (var i = 0; i < pointsArray.length; i++) {
 		outputString += i + " [" + pointsArray[i] + "]\n";
@@ -98,22 +87,7 @@ function init()
 	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-	// GEOMETRY 
-	//creates basic black mesh for points
-	
-	//array of points
-	
-	//pointsArray = [[0,0,0],[0,0,10],[0,10,10],[0,10,0],[10,0,0],[10,0,10],[10,10,0],[10,10,10]]
-	//loop that goes through and plots all the points
 
-	//axis pointers
-	var axes = new THREE.AxisHelper(100);
-	scene.add( axes );
-	plotPoints();
-
-	// SKY
-
-	// skybox
 	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
 	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
@@ -121,8 +95,53 @@ function init()
 	
 	// fog must be added to scene before first render
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+	plotPoints();
+	createOptions();
+	changeOptions();
+	
+	userOptions();
 }
+function changeOptions() {
+	xGrid = document.getElementById("xGrid").checked;
+	yGrid = document.getElementById("yGrid").checked;
+	zGrid = document.getElementById("zGrid").checked;
+	axisHelper = document.getElementById("axisHelper").checked;
+	userOptions();
+}
+function createOptions() {
+	axes = new THREE.AxisHelper(100);
+	gridXZ = new THREE.GridHelper(100, 10);
+	gridXY = new THREE.GridHelper(100, 10);
+	gridXY.rotation.x = Math.PI/2;
+	gridYZ = new THREE.GridHelper(100, 10);
+	gridYZ.rotation.z = Math.PI/2;
+}
+function userOptions() {
 
+	//axis pointers
+	if (axisHelper) {
+		scene.add( axes );
+	} else {
+		scene.remove(axes);
+	}
+
+	//grid helpers
+	if (xGrid) {
+		scene.add(gridXZ);
+	} else {
+		scene.remove(gridXZ);
+	}
+	if (yGrid) {
+		scene.add(gridXY);
+	} else {
+		scene.remove(gridXY);
+	}
+	if (zGrid) {
+		scene.add(gridYZ);
+	} else {
+		scene.remove(gridYZ);
+	}
+}
 function animate() 
 {
     requestAnimationFrame( animate );
@@ -141,14 +160,20 @@ function render()
 	renderer.render( scene, camera );
 }
 function plotPoints() { 
-	//scene = new THREE.Scene();
+	//remove old objects
+	for (var i = 0; i < objectArray.length; i++) {
+		scene.remove(objectArray[i]);
+	}
+	objectArray = new Array();
+	//alert(typeof objectArray);
 	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
 	for (var i = 0; i < pointsArray.length; i++) {
-	var cubeGeometry = new THREE.CubeGeometry( 1, 1, 1);
-	// using THREE.MeshFaceMaterial() in the constructor below
-	//   causes the mesh to use the materials stored in the geometry
-	cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-	cube.position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
-	scene.add( cube );	
+		var cubeGeometry = new THREE.CubeGeometry( 0.5, 0.5, 0.5);
+		// using THREE.MeshFaceMaterial() in the constructor below
+		//   causes the mesh to use the materials stored in the geometry
+		objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+		objectArray[i].position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
+		scene.add( objectArray[i] );	
+	};
 };
-};
+//});
