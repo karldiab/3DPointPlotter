@@ -31,12 +31,12 @@ function enterPoints() {
 	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 	while (input.length > 0) {
 		//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
-		while (input.length > 0 && isNaN(input.charAt(0))) {
+		while (input.length > 0 && isNaN(input.charAt(0)) && input.charAt(0) !== '-' && input.charAt(0) !== '.') {
 			input = input.substr(1);
 			
 		}
 		var numberHolder = "";
-		while (input.length > 0 && (input.charAt(0) === '.' || !isNaN(input.charAt(0)))) {
+		while (input.length > 0 && (input.charAt(0) === '-' || input.charAt(0) === '.' || !isNaN(input.charAt(0)))) {
 			numberHolder += "" + input.charAt(0);
 			input = input.substr(1);
 			
@@ -96,55 +96,93 @@ function init()
 	// fog must be added to scene before first render
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	plotPoints();
-	createOptions();
+	//createOptions();
 	changeOptions();
-	
-	userOptions();
 }
 function changeOptions() {
 	xGrid = document.getElementById("xGrid").checked;
 	yGrid = document.getElementById("yGrid").checked;
 	zGrid = document.getElementById("zGrid").checked;
+	lockGridSize = document.getElementById("lockGridSize").checked;
 	axisHelper = document.getElementById("axisHelper").checked;
+	incrementValue = document.getElementById("incrementValue").value;
+	document.getElementById("currentGridSize").innerHTML = "Grid Detail: " + incrementValue;
+	//alert(incrementValue);
+	createOptions();
 	userOptions();
+	
+	
+	
+	
 }
 function createOptions() {
-	axes = new THREE.AxisHelper(100);
-	gridXZ = new THREE.GridHelper(100, 10);
-	gridXY = new THREE.GridHelper(100, 10);
-	gridXY.rotation.x = Math.PI/2;
-	gridYZ = new THREE.GridHelper(100, 10);
-	gridYZ.rotation.z = Math.PI/2;
+	var cameraPosition = new THREE.Vector3();
+	cameraPosition.getPositionFromMatrix( camera.matrixWorld );
+	//alert(cameraPosition.x + ',' + cameraPosition.y + ',' + cameraPosition.z);
+	if (!lockGridSize) {
+		cameraDistance = Math.sqrt(cameraPosition.x * cameraPosition.x + cameraPosition.y * cameraPosition.y + cameraPosition.z * cameraPosition.z);
+	}
+	cameraDistance = cameraDistance === 0 ? 150 : cameraDistance;
+	if (typeof axes !== 'undefined') {
+		scene.remove(axes);
+		scene.remove(gridXZ);
+		scene.remove(gridXY);
+		scene.remove(gridYZ);
+	}
+
+		axes = new THREE.AxisHelper(cameraDistance === 0 ? 150 : cameraDistance);
+		gridXZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+		gridXY = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+		gridXY.rotation.x = Math.PI/2;
+		gridYZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+		gridYZ.rotation.z = Math.PI/2;
+	
+
 }
 function userOptions() {
-
-	//axis pointers
-	if (axisHelper) {
-		scene.add( axes );
-	} else {
-		scene.remove(axes);
+	if (typeof axes !== 'undefined') {
+		//axis pointers
+		if (axisHelper) {
+			scene.add( axes );
+		} else {
+			scene.remove(axes);
+		}
+	
+		//grid helpers
+		if (xGrid) {
+			scene.add(gridXZ);
+		} else {
+			scene.remove(gridXZ);
+		}
+		if (yGrid) {
+			scene.add(gridXY);
+		} else {
+			scene.remove(gridXY);
+		}
+		if (zGrid) {
+			scene.add(gridYZ);
+		} else {
+			scene.remove(gridYZ);
+		}
 	}
-
-	//grid helpers
-	if (xGrid) {
-		scene.add(gridXZ);
-	} else {
-		scene.remove(gridXZ);
-	}
-	if (yGrid) {
-		scene.add(gridXY);
-	} else {
-		scene.remove(gridXY);
-	}
-	if (zGrid) {
-		scene.add(gridYZ);
-	} else {
-		scene.remove(gridYZ);
+}
+function samplePoints(sampleNumber) {
+	switch(sampleNumber) {
+		case 0: 
+			pointsArray = [[-10,-10,-10],[-10,-10,10],[-10,10,10],[-10,10,-10],[10,-10,-10],[10,-10,10],[10,10,-10],[10,10,10]];
+			plotPoints();
+			break;
+		case 1:
+			pointsArray = [[0,-7.1364417954618,-18.683447179254316],[-7.1364417954618,-18.683447179254316,0],[-18.683447179254316,0,-7.1364417954618],[-11.547005383792516,-11.547005383792516,-11.547005383792516],[-11.547005383792516,-11.547005383792516,11.547005383792516],[0,-7.1364417954618,18.683447179254316],[-7.1364417954618,18.683447179254316,0],[-18.683447179254316,0,7.1364417954618],[-11.547005383792516,11.547005383792516,-11.547005383792516],[-11.547005383792516,11.547005383792516,11.547005383792516],[0,7.1364417954618,-18.683447179254316],[7.1364417954618,-18.683447179254316,0],[18.683447179254316,0,-7.1364417954618],[11.547005383792516,-11.547005383792516,-11.547005383792516],[11.547005383792516,-11.547005383792516,11.547005383792516],[0,7.1364417954618,18.683447179254316],[7.1364417954618,18.683447179254316,0],[18.683447179254316,0,7.1364417954618],[11.547005383792516,11.547005383792516,-11.547005383792516],[11.547005383792516,11.547005383792516,11.547005383792516]];
+			plotPoints();
+			break;
 	}
 }
 function animate() 
 {
     requestAnimationFrame( animate );
+	createOptions();
+	userOptions();
 	render();		
 	update();
 	//plotPoints();
