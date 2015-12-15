@@ -8,8 +8,11 @@
 var container, scene, camera, renderer, controls, stats;
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
-var pointsArray = [[0,0,0],[0,0,10],[0,10,10],[0,10,0],[10,0,0],[10,0,10],[10,10,0],[10,10,10]];
+//Hard codes a set of points are sample starter points;
+var pointsArray = [[0,-7.1364417954618,-18.683447179254316],[-7.1364417954618,-18.683447179254316,0],[-18.683447179254316,0,-7.1364417954618],[-11.547005383792516,-11.547005383792516,-11.547005383792516],[-11.547005383792516,-11.547005383792516,11.547005383792516],[0,-7.1364417954618,18.683447179254316],[-7.1364417954618,18.683447179254316,0],[-18.683447179254316,0,7.1364417954618],[-11.547005383792516,11.547005383792516,-11.547005383792516],[-11.547005383792516,11.547005383792516,11.547005383792516],[0,7.1364417954618,-18.683447179254316],[7.1364417954618,-18.683447179254316,0],[18.683447179254316,0,-7.1364417954618],[11.547005383792516,-11.547005383792516,-11.547005383792516],[11.547005383792516,-11.547005383792516,11.547005383792516],[0,7.1364417954618,18.683447179254316],[7.1364417954618,18.683447179254316,0],[18.683447179254316,0,7.1364417954618],[11.547005383792516,11.547005383792516,-11.547005383792516],[11.547005383792516,11.547005383792516,11.547005383792516]]
 var objectArray = new Array();
+//Default point size;
+var pointSize = 0.5;
 
 // custom global variables
 var cube;
@@ -19,11 +22,10 @@ init();
 
 // animation loop
 animate();
-
+/*This function takes in 3D points from the user in a wide variety of formats, inperperates them, and
+inputs them into an array to be plotted*/
 function enterPoints() {
-	/*for (var i =0; i < pointsArray.length;i++) {
-		//scene.removeObject(pointsArray[i]);
-	}*/
+
 	pointsArray = new Array();
 	var input = document.getElementById("pointsInput").value;
 	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
@@ -82,9 +84,9 @@ function init()
 	renderer.setSize(750, 750);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
-	THREEx.WindowResize(renderer, camera);
+	//THREEx.WindowResize(renderer, camera);
 	// toggle full-screen on given key press
-	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 
@@ -95,10 +97,13 @@ function init()
 	
 	// fog must be added to scene before first render
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-	plotPoints();
-	//createOptions();
 	changeOptions();
+	plotPoints();
+	//createGrids();
+	
 }
+/*This function is called whenever the user makes a change to the options panel
+and makes the change to the appropriate variable, then redraws */
 function changeOptions() {
 	xGrid = document.getElementById("xGrid").checked;
 	yGrid = document.getElementById("yGrid").checked;
@@ -106,17 +111,24 @@ function changeOptions() {
 	lockGridSize = document.getElementById("lockGridSize").checked;
 	axisHelper = document.getElementById("axisHelper").checked;
 	incrementValue = document.getElementById("incrementValue").value;
+	var currentPointSize = pointSize;
+	pointSize = document.getElementById("pointSize").value;
+	//Only redraws all the points if the pointSize has been changed to save CPU;
+	if (currentPointSize != pointSize) {
+		plotPoints();
+	}
 	document.getElementById("currentGridSize").innerHTML = "Grid Detail: " + incrementValue;
-	//alert(incrementValue);
-	createOptions();
-	userOptions();
+	document.getElementById("currentPointSize").innerHTML = "Point Size: " + pointSize;
+	
+	createGrids();
+	toggleAxes();
 	
 	
 	
 	
 }
-function createOptions() {
-	var cameraPosition = new THREE.Vector3();
+function createGrids() {
+	cameraPosition = new THREE.Vector3();
 	cameraPosition.getPositionFromMatrix( camera.matrixWorld );
 	//alert(cameraPosition.x + ',' + cameraPosition.y + ',' + cameraPosition.z);
 	if (!lockGridSize) {
@@ -129,17 +141,17 @@ function createOptions() {
 		scene.remove(gridXY);
 		scene.remove(gridYZ);
 	}
-
-		axes = new THREE.AxisHelper(cameraDistance === 0 ? 150 : cameraDistance);
-		gridXZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
-		gridXY = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
-		gridXY.rotation.x = Math.PI/2;
-		gridYZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
-		gridYZ.rotation.z = Math.PI/2;
+	axes = new THREE.AxisHelper(cameraDistance === 0 ? 150 : cameraDistance);
+	gridXZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+	gridXY = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+	gridXY.rotation.x = Math.PI/2;
+	gridYZ = new THREE.GridHelper(cameraDistance, cameraDistance/incrementValue);
+	gridYZ.rotation.z = Math.PI/2;
 	
 
 }
-function userOptions() {
+//Adds or removes grid and axis helper when called
+function toggleAxes() {
 	if (typeof axes !== 'undefined') {
 		//axis pointers
 		if (axisHelper) {
@@ -166,14 +178,32 @@ function userOptions() {
 		}
 	}
 }
+//Sample points generator
 function samplePoints(sampleNumber) {
 	switch(sampleNumber) {
+		//Draws points of a cube
 		case 0: 
 			pointsArray = [[-10,-10,-10],[-10,-10,10],[-10,10,10],[-10,10,-10],[10,-10,-10],[10,-10,10],[10,10,-10],[10,10,10]];
 			plotPoints();
 			break;
+		//Draws points for a dodecahedron
 		case 1:
 			pointsArray = [[0,-7.1364417954618,-18.683447179254316],[-7.1364417954618,-18.683447179254316,0],[-18.683447179254316,0,-7.1364417954618],[-11.547005383792516,-11.547005383792516,-11.547005383792516],[-11.547005383792516,-11.547005383792516,11.547005383792516],[0,-7.1364417954618,18.683447179254316],[-7.1364417954618,18.683447179254316,0],[-18.683447179254316,0,7.1364417954618],[-11.547005383792516,11.547005383792516,-11.547005383792516],[-11.547005383792516,11.547005383792516,11.547005383792516],[0,7.1364417954618,-18.683447179254316],[7.1364417954618,-18.683447179254316,0],[18.683447179254316,0,-7.1364417954618],[11.547005383792516,-11.547005383792516,-11.547005383792516],[11.547005383792516,-11.547005383792516,11.547005383792516],[0,7.1364417954618,18.683447179254316],[7.1364417954618,18.683447179254316,0],[18.683447179254316,0,7.1364417954618],[11.547005383792516,11.547005383792516,-11.547005383792516],[11.547005383792516,11.547005383792516,11.547005383792516]];
+			plotPoints();
+			break;
+		//To draw a random scatter plot
+		case 2:
+			pointsArray = new Array();
+			//Number of points to plot is decided by camera distance, but kept at a reasonable number
+			var howManyPoints = cameraDistance < 100? 100 : cameraDistance;
+			howManyPoints = howManyPoints > 2000? 2000 : howManyPoints;
+			for (var i = 0; i < 100;i++) {
+				var tempArray = new Array();
+				tempArray[0] = Math.random()*cameraDistance - cameraDistance/2;
+				tempArray[1] = Math.random()*cameraDistance - cameraDistance/2;
+				tempArray[2] = Math.random()*cameraDistance - cameraDistance/2;
+				pointsArray.push(tempArray);
+			}
 			plotPoints();
 			break;
 	}
@@ -181,11 +211,10 @@ function samplePoints(sampleNumber) {
 function animate() 
 {
     requestAnimationFrame( animate );
-	createOptions();
-	userOptions();
+	createGrids();
+	toggleAxes();
 	render();		
 	update();
-	//plotPoints();
 }
 
 function update()
@@ -206,7 +235,7 @@ function plotPoints() {
 	//alert(typeof objectArray);
 	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
 	for (var i = 0; i < pointsArray.length; i++) {
-		var cubeGeometry = new THREE.CubeGeometry( 0.5, 0.5, 0.5);
+		var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
 		// using THREE.MeshFaceMaterial() in the constructor below
 		//   causes the mesh to use the materials stored in the geometry
 		objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
