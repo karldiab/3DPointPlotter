@@ -1,8 +1,29 @@
 body 
 {
+	text-align: center;
 	font-family: Monospace;
 	font-weight: bold;
 	background-color: #ccccff;
 	margin: 0px;
 	overflow: hidden;
+}
+div#controls {
+	border-style: solid;
+	border-width: 3px;
+	background-color: white;
+    position: fixed;
+    left: 0;
+    top: 10%;
+	height: 100%;
+	width: 25%;
+}
+div#points {
+	border-style: solid;
+	border-width: 3px;
+	background-color: white;
+    position: fixed;
+    right: 0;
+	height: 100%;
+    top: 10%;
+	width: 20%;
 }

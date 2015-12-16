@@ -35,42 +35,34 @@
 					<h1>3D Points Plotter</h1>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-6">
-					<div class="centered">
 						<div id="ThreeJS"></div>
-						
-					</div>
-				</div>
-					<div class="col-md-6" style="padding: 50px;">
-						<div class="row">
-								<textarea name="pointsInput" id="pointsInput" cols="30" rows="10"></textarea>
-								<button class="btn btn-primary" onclick="enterPoints()">Enter Points</button>
-								<textarea name="pointsOutput" id="pointsOutput" cols="30" rows="10"></textarea>
-						</div>
+					<div id="controls">
 						<div class="row" style="padding: 25px;">
-						<div class="col-xs-12">
-							<form oninput="changeOptions()">
+								<h3>Viewing Options</h3><br />
 								Show Axis <input type="checkbox" id="axisHelper" onclick="changeOptions()" checked/>
 								Lock Grid Size <input type="checkbox" id="lockGridSize" onclick="changeOptions()"/><br />
 								X Grid: <input type="checkbox" id="xGrid" onclick="changeOptions()"/>
 								Y Grid: <input type="checkbox" id="yGrid" onclick="changeOptions()" />
-								Z Grid: <input type="checkbox" id="zGrid" onclick="changeOptions()" /><br />
+								Z Grid: <input type="checkbox" id="zGrid" onclick="changeOptions()" /><br /><hr />
 								<p id="currentGridSize">Grid Detail: 20</p>
-								<input style="width: 50%;" id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
+								<input id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
 								<p id="currentPointSize">Point Size: 20</p>
-								<input style="width: 50%;" id="pointSize" type="range" min="0.1" max="3" step="0.1" value="0.5" />
-							</form>
-							
+								<input id="pointSize" type="range" min="0.1" max="3" step="0.1" value="0.5" /><br /><hr />
 							<p>Sample Point Sets</p><br />
-							<div class="btn-group">
+							<div>
 								<button class="btn btn-success btn-xs" onclick="samplePoints(0);">Cube</button>
 								<button class="btn btn-success btn-xs" onclick="samplePoints(1);">Dodecahedron</button>
 								<button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random Scatter</button>
 							</div>
 						</div>
+					</div>
+					<div id="points">
+						<div class="row">
+								<textarea name="pointsInput" id="pointsInput" rows="5"></textarea><br/>
+								<button class="btn btn-primary" onclick="enterPoints()">Enter Points</button>
+								<textarea name="pointsOutput" id="pointsOutput" rows="5"></textarea>
 						</div>
-					
+					</div>
 				<div class="row">
 					<div class="col-xs-12">
 						<h4>Author: Karl Diab</h4>
