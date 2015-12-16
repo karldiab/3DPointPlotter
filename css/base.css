@@ -2,7 +2,24 @@ body
 {
 	font-family: Monospace;
 	font-weight: bold;
-	background-color: #ccccff;
+	background-color: #DDD;
 	margin: 0px;
 	overflow: hidden;
+}
+#ThreeJS {
+	
+
+	width: 500px;
+	height: 500px;
+	border:0;
+}
+div {
+	border-style: solid;
+    border-width: 1px;
+	
+}
+div #ThreeJS {
+	background-color: #AAA;
+    border-style: solid;
+    border-width: 5px;
 }

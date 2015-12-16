@@ -63,12 +63,13 @@ function init()
 {
 
 	scene = new THREE.Scene();
-
+	var width = 500;
+	var height = 500;
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
 	// camera attributes
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	var VIEW_ANGLE = 45, ASPECT = width / height, NEAR = 0.1, FAR = 20000;
 	// set up camera
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	// add the camera to the scene
@@ -81,18 +82,16 @@ function init()
 	else
 		renderer = new THREE.CanvasRenderer(); 
 	
-	renderer.setSize(750, 750);
+	renderer.setSize(width, height);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
 	//THREEx.WindowResize(renderer, camera);
 	// toggle full-screen on given key press
-	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 
-	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	var skyBoxGeometry = new THREE.CubeGeometry( 1000, 1000, 1000 );
 	// scene.add(skyBox);
 	
 	// fog must be added to scene before first render
