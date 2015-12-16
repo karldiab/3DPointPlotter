@@ -158,13 +158,16 @@ function changeOptions() {
 	
 }
 function createGrids() {
+	if (typeof cameraDistance === 'undefined') {
+		cameraDistance = 150;
+	}
 	cameraPosition = new THREE.Vector3();
 	cameraPosition.getPositionFromMatrix( camera.matrixWorld );
 	//alert(cameraPosition.x + ',' + cameraPosition.y + ',' + cameraPosition.z);
 	if (!lockGridSize) {
 		cameraDistance = Math.sqrt(cameraPosition.x * cameraPosition.x + cameraPosition.y * cameraPosition.y + cameraPosition.z * cameraPosition.z);
 	}
-	cameraDistance = cameraDistance === 0 ? 150 : cameraDistance;
+
 	if (typeof axes !== 'undefined') {
 		scene.remove(axes);
 		scene.remove(gridXZ);
