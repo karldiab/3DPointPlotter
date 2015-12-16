@@ -6,10 +6,9 @@
 //$( document ).ready(function() {	
 // standard global variables
 var container, scene, camera, renderer, controls, stats;
-var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 //Hard codes a set of points are sample starter points;
-var pointsArray = [[0,-7.1364417954618,-18.683447179254316],[-7.1364417954618,-18.683447179254316,0],[-18.683447179254316,0,-7.1364417954618],[-11.547005383792516,-11.547005383792516,-11.547005383792516],[-11.547005383792516,-11.547005383792516,11.547005383792516],[0,-7.1364417954618,18.683447179254316],[-7.1364417954618,18.683447179254316,0],[-18.683447179254316,0,7.1364417954618],[-11.547005383792516,11.547005383792516,-11.547005383792516],[-11.547005383792516,11.547005383792516,11.547005383792516],[0,7.1364417954618,-18.683447179254316],[7.1364417954618,-18.683447179254316,0],[18.683447179254316,0,-7.1364417954618],[11.547005383792516,-11.547005383792516,-11.547005383792516],[11.547005383792516,-11.547005383792516,11.547005383792516],[0,7.1364417954618,18.683447179254316],[7.1364417954618,18.683447179254316,0],[18.683447179254316,0,7.1364417954618],[11.547005383792516,11.547005383792516,-11.547005383792516],[11.547005383792516,11.547005383792516,11.547005383792516]]
+var pointsArray = [[0.000,-7.136,-18.683],[-7.136,-18.683,0.000],[-18.683,0.000,-7.136],[-11.547,-11.547,-11.547],[-11.547,-11.547,11.547],[0.000,-7.136,18.683],[-7.136,18.683,0.000],[-18.683,0.000,7.136],[-11.547,11.547,-11.547],[-11.547,11.547,11.547],[0.000,7.136,-18.683],[7.136,-18.683,0.000],[18.683,0.000,-7.136],[11.547,-11.547,-11.547],[11.547,-11.547,11.547],[0.000,7.136,18.683],[7.136,18.683,0.000],[18.683,0.000,7.136],[11.547,11.547,-11.547],[11.547,11.547,11.547]]
 var objectArray = new Array();
 //Default point size;
 var pointSize = 0.5;
@@ -24,9 +23,29 @@ init();
 animate();
 /*This function takes in 3D points from the user in a wide variety of formats, inperperates them, and
 inputs them into an array to be plotted*/
-function enterPoints() {
 
-	pointsArray = new Array();
+function addPoint() {
+	var subArray = new Array();
+	var xAdd = document.getElementById("xAdd").value;
+	subArray.push(xAdd);
+	document.getElementById("xAdd").value = "";
+	var yAdd = document.getElementById("yAdd").value;
+	subArray.push(yAdd);
+	document.getElementById("yAdd").value = "";
+	var zAdd = document.getElementById("zAdd").value;
+	subArray.push(zAdd);
+	document.getElementById("zAdd").value = "";
+
+	pointsArray.push(subArray);
+	outputPoints();
+	plotPoints();
+	
+}
+
+function enterPoints(option) {
+	if (option == 0) {
+		pointsArray = new Array();
+	}
 	var input = document.getElementById("pointsInput").value;
 	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
 	var subArray = new Array();
@@ -43,27 +62,36 @@ function enterPoints() {
 			input = input.substr(1);
 			
 		}
-		subArray.push(numberHolder);
+		var parsedValue = parseFloat(numberHolder);
+		subArray.push(parsedValue);
 		if (subArray.length == 3) {
 			pointsArray.push(subArray);
 			subArray = new Array();
+			
 		}
 	}
 	
-	var outputString = "";
-	for (var i = 0; i < pointsArray.length; i++) {
-		outputString += i + " [" + pointsArray[i] + "]\n";
-	}
-	document.getElementById("pointsOutput").innerHTML = "" + outputString;
+	outputPoints();
 	plotPoints();
 	
+
+}
+function outputPoints() {
+	var outputPanel = document.getElementById("pointsOutput");
+	outputPanel.innerHTML = "";
+	for (var i = 0; i < pointsArray.length; i++) {
+		var singlePoint = i + " [" + pointsArray[i] + "]";
+		var listItem = document.createElement("option");
+		var node = document.createTextNode(singlePoint);
+		listItem.appendChild(node);
+		outputPanel.appendChild(listItem);
+	}
 
 }
 function init() 
 {
 
 	scene = new THREE.Scene();
-
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
@@ -75,7 +103,8 @@ function init()
 	scene.add(camera);
 
 	camera.position.set(0,150,100);
-	
+
+
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
@@ -84,6 +113,7 @@ function init()
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
+	THREEx.WindowResize(renderer, camera);
 	//THREEx.WindowResize(renderer, camera);
 	// toggle full-screen on given key press
 	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
@@ -188,7 +218,7 @@ function samplePoints(sampleNumber) {
 			break;
 		//Draws points for a dodecahedron
 		case 1:
-			pointsArray = [[0,-7.1364417954618,-18.683447179254316],[-7.1364417954618,-18.683447179254316,0],[-18.683447179254316,0,-7.1364417954618],[-11.547005383792516,-11.547005383792516,-11.547005383792516],[-11.547005383792516,-11.547005383792516,11.547005383792516],[0,-7.1364417954618,18.683447179254316],[-7.1364417954618,18.683447179254316,0],[-18.683447179254316,0,7.1364417954618],[-11.547005383792516,11.547005383792516,-11.547005383792516],[-11.547005383792516,11.547005383792516,11.547005383792516],[0,7.1364417954618,-18.683447179254316],[7.1364417954618,-18.683447179254316,0],[18.683447179254316,0,-7.1364417954618],[11.547005383792516,-11.547005383792516,-11.547005383792516],[11.547005383792516,-11.547005383792516,11.547005383792516],[0,7.1364417954618,18.683447179254316],[7.1364417954618,18.683447179254316,0],[18.683447179254316,0,7.1364417954618],[11.547005383792516,11.547005383792516,-11.547005383792516],[11.547005383792516,11.547005383792516,11.547005383792516]];
+			pointsArray = [[0.000,-7.136,-18.683],[-7.136,-18.683,0.000],[-18.683,0.000,-7.136],[-11.547,-11.547,-11.547],[-11.547,-11.547,11.547],[0.000,-7.136,18.683],[-7.136,18.683,0.000],[-18.683,0.000,7.136],[-11.547,11.547,-11.547],[-11.547,11.547,11.547],[0.000,7.136,-18.683],[7.136,-18.683,0.000],[18.683,0.000,-7.136],[11.547,-11.547,-11.547],[11.547,-11.547,11.547],[0.000,7.136,18.683],[7.136,18.683,0.000],[18.683,0.000,7.136],[11.547,11.547,-11.547],[11.547,11.547,11.547]];
 			plotPoints();
 			break;
 		//To draw a random scatter plot
@@ -199,9 +229,9 @@ function samplePoints(sampleNumber) {
 			howManyPoints = howManyPoints > 2000? 2000 : howManyPoints;
 			for (var i = 0; i < 100;i++) {
 				var tempArray = new Array();
-				tempArray[0] = Math.random()*cameraDistance - cameraDistance/2;
-				tempArray[1] = Math.random()*cameraDistance - cameraDistance/2;
-				tempArray[2] = Math.random()*cameraDistance - cameraDistance/2;
+				tempArray[0] = (Math.random()*cameraDistance - cameraDistance/2).toFixed(3);
+				tempArray[1] = (Math.random()*cameraDistance - cameraDistance/2).toFixed(3);
+				tempArray[2] = (Math.random()*cameraDistance - cameraDistance/2).toFixed(3);
 				pointsArray.push(tempArray);
 			}
 			plotPoints();
@@ -242,5 +272,29 @@ function plotPoints() {
 		objectArray[i].position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
 		scene.add( objectArray[i] );	
 	};
+	outputPoints();
 };
-//});
+function autoZoom() {
+	var minX, maxX, minY, maxY, minZ, maxZ;
+	for (var i = 0; i < pointsArray.length; i++) {
+		if (typeof minX === "undefined" || pointsArray[i][0] < minX) {
+			minX = pointsArray[i][0];
+		}
+		if (typeof maxX === "undefined" || pointsArray[i][0] > maxX) {
+			maxX = pointsArray[i][0];
+		}
+		if (typeof minY === "undefined" || pointsArray[i][1] < minY) {
+			minY = pointsArray[i][1];
+		}
+		if (typeof maxY === "undefined" || pointsArray[i][1] > maxY) {
+			maxY = pointsArray[i][1];
+		}
+		if (typeof minZ === "undefined" || pointsArray[i][2] < minZ) {
+			minZ = pointsArray[i][2];
+		}
+		if (typeof maxZ === "undefined" || pointsArray[i][2] > maxZ) {
+			maxZ = pointsArray[i][2];
+		}
+	}
+	camera.position.set(100,0,100);
+}
