@@ -81,7 +81,7 @@ function init()
 	else
 		renderer = new THREE.CanvasRenderer(); 
 	
-	renderer.setSize(750, 750);
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
 	//THREEx.WindowResize(renderer, camera);
