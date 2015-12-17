@@ -35,7 +35,7 @@
 			</div>
 						<div id="ThreeJS"></div>
 					<div id="controls">
-						<div class="row" style="padding: 25px;">
+
 								<h3>Viewing Options</h3><br />
 								Show Axis <input type="checkbox" id="axisHelper" onclick="changeOptions()" checked/>
 								Lock Grid Size <input type="checkbox" id="lockGridSize" onclick="changeOptions()" checked/><br />
@@ -52,21 +52,26 @@
 							<div>
 								<button class="btn btn-success btn-xs" onclick="samplePoints(0);">Cube</button>
 								<button class="btn btn-success btn-xs" onclick="samplePoints(1);">Dodecahedron</button>
-								<button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random Scatter</button><br />
-								<hr />
-								<button class="btn btn-success btn-xs" onclick="autoZoom();">Auto Zoom</button>
-								
+								<button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random</button><br />
 							</div>
-						</div>
+							<div id="authorInfo">
+								<hr />
+								<h4>Author: Karl Diab</h4><br/>
+								<p>A simple but functional 3D Points plotter utility written in JavaScript using the THREE.js library. You may
+									link to this page from elsewhere or use the source code, but please give credit where it is due.
+								</p>
+								<a href="https://github.com/karldiab/3DPointsPlotter"><button class="btn btn-primary">Source Code</button></a>
+							</div>
 					</div>
 					<div id="points">
-								<h5>Enter Points</h5><br/>
+								<h5>Enter Single Point</h5><br/>
 								<strong>X: </strong><input type="text" size="5" id="xAdd"></input>
 								<strong>Y: </strong><input type="text" size="5" id="yAdd"></input>
 								<strong>Z: </strong><input type="text" size="5" id="zAdd"></input>
 								<button class="btn btn-success btn-xs" onclick="addPoint()">Add</button>
 								<hr />
-								<textarea name="pointsInput" id="pointsInput" rows="5"></textarea><br />
+								<h5>Enter Multiple Points</h5><br/>
+								<textarea name="pointsInput" id="pointsInput" rows="5" placeholder="Paste your list of points in here"></textarea><br />
 								<div class="btn-group">
 								<button class="btn btn-danger btn-sm" onclick="enterPoints(0)">Replace</button>
 								<button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add</button>
@@ -80,22 +85,6 @@
 								
 								</div>
 					</div>
-				<div class="row">
-					<div class="col-xs-12">
-						<h4>Author: Karl Diab</h4>
-						<h5>Completed 25 November 2015</h5>
-						<p>A simple engine that builds 3D objects and displays them from a variable vantage point.
-							Built entirely in JavaScript with no additional libraries. The purpose of this project
-							was to better understand the mechanics of more advanced graphics libraries. Feel free 
-							the use the source code but please give credit where it is due.
-						</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<a href="https://github.com/karldiab/JS3DRenderEngine/"><button class="btn btn-primary">Source Code</button></a>
-				</div>
-			</div>
 		</div>
 
 <script src="js/main.js"></script>

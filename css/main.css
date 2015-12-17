@@ -14,7 +14,7 @@ div#controls {
 	background-color: white;
     position: fixed;
     left: 0;
-    top: 10%;
+    top: 6%;
 	height: 100%;
 	width: 270px;
 }
@@ -26,7 +26,7 @@ div#points {
     position: fixed;
     right: 0;
 	height: 100%;
-    top: 10%;
+    top: 6%;
 	width: 300px;
 }
 div#outputPoints {
@@ -37,4 +37,10 @@ div#outputPoints {
 select#pointsOutput {
 	overflow: auto;
 	width: 80%;
+}
+div#authorInfo {
+	position: fixed;
+	bottom: 2%;
+	width: 270px;
+	padding: 10px;
 }
