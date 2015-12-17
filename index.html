@@ -6,18 +6,14 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" media="screen">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel=stylesheet href="css/base.css"/>
+    <link rel=stylesheet href="css/main.css"/>
 </head>
 <body>
 
 <script src="js/Three.js"></script>
 <script src="js/Detector.js"></script>
-<script src="js/Stats.js"></script>
 <script src="js/OrbitControls.js"></script>
-<script src="js/THREEx.KeyboardState.js"></script>
-<script src="js/THREEx.FullScreen.js"></script>
 <script src="js/THREEx.WindowResize.js"></script>
-
 <!-- jQuery code to display an information button and box when clicked. -->
 <script src="js/jquery-1.9.1.js"></script>
 <script src="js/jquery-ui.js"></script>
@@ -31,54 +27,67 @@
 </div>
 
 
-	<div class="container">
+	<div class="container-fluid">
 			<div class="row">
 				<div class="col-xs-12">
 					<h1>3D Points Plotter</h1>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-6">
-					<div class="centered">
 						<div id="ThreeJS"></div>
-						<script src="js/main.js"></script>
-					</div>
-				</div>
-					<div class="col-md-6" style="padding: 50px;">
-						<div class="row">
-								<textarea name="pointsInput" id="pointsInput" cols="30" rows="10"></textarea>
-								<button class="btn btn-primary" onclick="enterPoints()">Enter Points</button>
-								<textarea name="pointsOutput" id="pointsOutput" cols="30" rows="10"></textarea>
-						</div>
-						<div class="row" style="padding: 25px;">
-						<div class="col-xs-12">
-							<div class="btn-group">
-								<button class="btn btn-primary" onclick="toggleDebug();">Toggle Text</button>
-								<button class="btn btn-success" onclick="changeShape(0);">Cube</button>
-								<button class="btn btn-success" onclick="changeShape(1);">Dodecahedron</button>
+					<div id="controls">
+
+								<h3>Viewing Options</h3><br />
+								Show Axis <input type="checkbox" id="axisHelper" onclick="changeOptions()" checked/>
+								Lock Grid Size <input type="checkbox" id="lockGridSize" onclick="changeOptions()" checked/><br />
+								X Grid: <input type="checkbox" id="xGrid" onclick="changeOptions()"/>
+								Y Grid: <input type="checkbox" id="yGrid" onclick="changeOptions()" />
+								Z Grid: <input type="checkbox" id="zGrid" onclick="changeOptions()" /><br /><hr />
+								<form oninput="changeOptions()">
+								<p id="currentGridSize">Grid Detail: 20</p>
+								<input id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
+								<p id="currentPointSize">Point Size: 20</p>
+								<input id="pointSize" type="range" min="0.1" max="5" step="0.1" value="0.5" /><br /><hr />
+								</form>
+							<p>Sample Point Sets</p><br />
+							<div>
+								<button class="btn btn-success btn-xs" onclick="samplePoints(0);">Cube</button>
+								<button class="btn btn-success btn-xs" onclick="samplePoints(1);">Dodecahedron</button>
+								<button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random</button><br />
 							</div>
-						</div>
-						</div>
-					
-				<div class="row">
-					<div class="col-xs-12">
-						<h4>Author: Karl Diab</h4>
-						<h5>Completed 25 November 2015</h5>
-						<p>A simple engine that builds 3D objects and displays them from a variable vantage point.
-							Built entirely in JavaScript with no additional libraries. The purpose of this project
-							was to better understand the mechanics of more advanced graphics libraries. Feel free 
-							the use the source code but please give credit where it is due.
-						</p>
-						</div>
+							<div id="authorInfo">
+								<hr />
+								<h4>Author: Karl Diab</h4><br/>
+								<p>A simple but functional 3D Points plotter utility written in JavaScript using the THREE.js library. You may
+									link to this page from elsewhere or use the source code, but please give credit where it is due.
+								</p>
+								<a href="https://github.com/karldiab/3DPointsPlotter"><button class="btn btn-primary">Source Code</button></a>
+							</div>
 					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<a href="https://github.com/karldiab/JS3DRenderEngine/"><button class="btn btn-primary">Source Code</button></a>
-				</div>
-			</div>
+					<div id="points">
+								<h5>Enter Single Point</h5><br/>
+								<strong>X: </strong><input type="text" size="5" id="xAdd"></input>
+								<strong>Y: </strong><input type="text" size="5" id="yAdd"></input>
+								<strong>Z: </strong><input type="text" size="5" id="zAdd"></input>
+								<button class="btn btn-success btn-xs" onclick="addPoint()">Add</button>
+								<hr />
+								<h5>Enter Multiple Points</h5><br/>
+								<textarea name="pointsInput" id="pointsInput" rows="5" placeholder="Paste your list of points in here"></textarea><br />
+								<div class="btn-group">
+								<button class="btn btn-danger btn-sm" onclick="enterPoints(0)">Replace</button>
+								<button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add</button>
+								</div>
+								<hr />
+								<div id="outputPoints">
+									
+									<hr />
+									<h4>Plotted Points</h4><br/>
+									<select name="pointsOutput" id="pointsOutput" size="8" multiple ></select>
+								
+								</div>
+					</div>
 		</div>
 
-
+<script src="js/main.js"></script>
 
 </body>
 </html>
