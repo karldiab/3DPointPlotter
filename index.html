@@ -37,11 +37,11 @@
 					<div id="controls">
 
 								<h3>Viewing Options</h3><br />
-								Show Axis <input type="checkbox" id="axisHelper" onclick="changeOptions()" checked/>
+								Show Axis <input type="checkbox" id="axisHelper" onclick="changeOptions()" />
 								Lock Grid Size <input type="checkbox" id="lockGridSize" onclick="changeOptions()" checked/><br />
-								X Grid: <input type="checkbox" id="xGrid" onclick="changeOptions()"/>
-								Y Grid: <input type="checkbox" id="yGrid" onclick="changeOptions()" />
-								Z Grid: <input type="checkbox" id="zGrid" onclick="changeOptions()" /><br /><hr />
+								XZ Grid: <input type="checkbox" id="xGrid" onclick="changeOptions()" checked/>
+								XY Grid: <input type="checkbox" id="yGrid" onclick="changeOptions()" />
+								YZ Grid: <input type="checkbox" id="zGrid" onclick="changeOptions()" /><br /><hr />
 								<form oninput="changeOptions()">
 								<p id="currentGridSize">Grid Detail: 20</p>
 								<input id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
