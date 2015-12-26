@@ -244,6 +244,13 @@ function samplePoints(sampleNumber) {
 function animate() 
 {
     requestAnimationFrame( animate );
+    
+    if (typeof selectedPoint !== "undefined") {
+        
+        sizeIncrementor += Math.PI/60
+        var scaleFactor = (Math.cos(sizeIncrementor))/2 + 2
+        objectArray[selectedPoint].scale.set( scaleFactor, scaleFactor, scaleFactor );
+    }
 	createGrids();
 	toggleAxes();
 	render();		
@@ -300,4 +307,25 @@ function autoZoom() {
 		}
 	}
 	camera.position.set(100,0,100);
+}
+/*Takes in the currently selected point and redraws it as red*/
+function pointSelector(event) {
+    if (typeof selectedPoint !== "undefined") {
+        scene.remove(objectArray[selectedPoint]);
+        var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
+        var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
+        objectArray[selectedPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+        objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
+        scene.add( objectArray[selectedPoint] );
+    }
+    sizeIncrementor = 0;
+    selectedPoint = parseInt(this.options[this.selectedIndex].text);
+    scene.remove(objectArray[selectedPoint]);
+    var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
+    var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
+    objectArray[selectedPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
+    scene.add( objectArray[selectedPoint] );
+    
+    
 }
