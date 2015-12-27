@@ -12,6 +12,7 @@ var pointsArray = [[0.000,-7.136,-18.683],[-7.136,-18.683,0.000],[-18.683,0.000,
 var objectArray = new Array();
 //Default point size;
 var pointSize = 0.5;
+var raycaster;
 
 // custom global variables
 var cube;
@@ -90,7 +91,6 @@ function outputPoints() {
 }
 function init() 
 {
-
 	scene = new THREE.Scene();
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
@@ -101,15 +101,11 @@ function init()
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	// add the camera to the scene
 	scene.add(camera);
-
 	camera.position.set(0,150,100);
-
-
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
 		renderer = new THREE.CanvasRenderer(); 
-	
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
@@ -118,21 +114,14 @@ function init()
 	// toggle full-screen on given key press
 	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-
-	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	// scene.add(skyBox);
-	
-	// fog must be added to scene before first render
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	changeOptions();
 	plotPoints();
-    
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
     projector = new THREE.Projector();
-    mouseVector = new THREE.Vector3();
-	
+    mouseVector = new THREE.Vector2();
+    window.addEventListener( 'click', mouseSelector, false );
 }
 /*This function is called whenever the user makes a change to the options panel
 and makes the change to the appropriate variable, then redraws */
@@ -314,27 +303,69 @@ function autoZoom() {
 	}
 	camera.position.set(100,0,100);
 }
-/*Takes in the currently selected point and redraws it as red*/
-function pointSelector(event) {
-    //takes old selected point, if it exists and redraws it as a normal point
+
+function listSelector(event) {
+    //if there is already a selected point, deselect it
     if (typeof selectedPoint !== "undefined") {
-        scene.remove(objectArray[selectedPoint]);
-        var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
-        var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
-        objectArray[selectedPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
-        objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
-        scene.add( objectArray[selectedPoint] );
+        pointDeselector(selectedPoint);
     }
+    selectedPoint = parseInt(this.options[this.selectedIndex].text);
+    selectPoint();
+}
+/*Takes in the currently selected point and redraws it as red*/
+function selectPoint() {
     //global variable is used by animator function to allow selected point's size to fluctuate
     sizeIncrementor = 0;
     //takes in selected point and redraws it as a colored point
-    selectedPoint = parseInt(this.options[this.selectedIndex].text);
     scene.remove(objectArray[selectedPoint]);
     var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
     var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
     objectArray[selectedPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
     objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
     scene.add( objectArray[selectedPoint] );
-    
-    
+}
+//takes old selected point, if it exists and redraws it as a normal point
+function pointDeselector(deselectPoint) {
+    scene.remove(objectArray[deselectPoint]);
+    var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
+    var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
+    objectArray[deselectPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    objectArray[deselectPoint].position.set(pointsArray[deselectPoint][0], pointsArray[deselectPoint][1], pointsArray[deselectPoint][2]);
+    scene.add( objectArray[deselectPoint] );
+}
+function mouseSelector(e) {
+    e.preventDefault();
+    /*mouseVector.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+    mouseVector.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+    var raycaster = projector.pickingRay( mouseVector.clone(), camera );
+    var intersects = raycaster.intersectObjects( objectArray );
+    var obj = intersects[0].object;
+    console.log(obj);*/
+    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, camera );
+    var intersects = raycaster.intersectObjects( objectArray );
+    if ( intersects.length > 0 ) {
+         intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+    }
+
+    /*
+    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+    raycaster.setFromCamera( mouse, camera );
+
+    var intersects = raycaster.intersectObjects( objects );
+
+    if ( intersects.length > 0 ) {
+
+        intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+
+        var particle = new THREE.Sprite( particleMaterial );
+        particle.position.copy( intersects[ 0 ].point );
+        particle.scale.x = particle.scale.y = 16;
+        scene.add( particle );
+
+    }*/
+    //obj.material.color.setHex( 0x999999 );
 }
