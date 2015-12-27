@@ -129,7 +129,9 @@ function init()
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	changeOptions();
 	plotPoints();
-	//createGrids();
+    
+    projector = new THREE.Projector();
+    mouseVector = new THREE.Vector3();
 	
 }
 /*This function is called whenever the user makes a change to the options panel
@@ -246,7 +248,6 @@ function animate()
     requestAnimationFrame( animate );
     
     if (typeof selectedPoint !== "undefined") {
-        
         sizeIncrementor += Math.PI/60
         var scaleFactor = (Math.cos(sizeIncrementor))/2 + 2
         objectArray[selectedPoint].scale.set( scaleFactor, scaleFactor, scaleFactor );
@@ -273,12 +274,17 @@ function plotPoints() {
 	}
 	objectArray = new Array();
 	//alert(typeof objectArray);
+    var selectedCubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
 	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
 	for (var i = 0; i < pointsArray.length; i++) {
 		var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
 		// using THREE.MeshFaceMaterial() in the constructor below
 		//   causes the mesh to use the materials stored in the geometry
-		objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+        if (typeof selectedPoint !== "undefined" && selectedPoint === i) {
+            objectArray[i] = new THREE.Mesh( cubeGeometry, selectedCubeMaterial );
+        } else {
+		  objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+        }
 		objectArray[i].position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
 		scene.add( objectArray[i] );	
 	};
@@ -310,6 +316,7 @@ function autoZoom() {
 }
 /*Takes in the currently selected point and redraws it as red*/
 function pointSelector(event) {
+    //takes old selected point, if it exists and redraws it as a normal point
     if (typeof selectedPoint !== "undefined") {
         scene.remove(objectArray[selectedPoint]);
         var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
@@ -318,7 +325,9 @@ function pointSelector(event) {
         objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
         scene.add( objectArray[selectedPoint] );
     }
+    //global variable is used by animator function to allow selected point's size to fluctuate
     sizeIncrementor = 0;
+    //takes in selected point and redraws it as a colored point
     selectedPoint = parseInt(this.options[this.selectedIndex].text);
     scene.remove(objectArray[selectedPoint]);
     var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
