@@ -9,7 +9,7 @@ var container, scene, camera, renderer, controls, stats;
 var clock = new THREE.Clock();
 //Hard codes a set of points are sample starter points;
 var pointsArray = [[0.000,-7.136,-18.683],[-7.136,-18.683,0.000],[-18.683,0.000,-7.136],[-11.547,-11.547,-11.547],[-11.547,-11.547,11.547],[0.000,-7.136,18.683],[-7.136,18.683,0.000],[-18.683,0.000,7.136],[-11.547,11.547,-11.547],[-11.547,11.547,11.547],[0.000,7.136,-18.683],[7.136,-18.683,0.000],[18.683,0.000,-7.136],[11.547,-11.547,-11.547],[11.547,-11.547,11.547],[0.000,7.136,18.683],[7.136,18.683,0.000],[18.683,0.000,7.136],[11.547,11.547,-11.547],[11.547,11.547,11.547]]
-var objectArray = new Array();
+var objectArray = [];
 //Default point size;
 var pointSize = 0.5;
 var raycaster;
@@ -26,7 +26,7 @@ animate();
 inputs them into an array to be plotted*/
 
 function addPoint() {
-	var subArray = new Array();
+	var subArray = [];
 	var xAdd = document.getElementById("xAdd").value;
 	subArray.push(xAdd);
 	document.getElementById("xAdd").value = "";
@@ -153,7 +153,7 @@ function createGrids() {
 		cameraDistance = 150;
 	}
 	cameraPosition = new THREE.Vector3();
-	cameraPosition.getPositionFromMatrix( camera.matrixWorld );
+	cameraPosition.setFromMatrixPosition( camera.matrixWorld );
 	//alert(cameraPosition.x + ',' + cameraPosition.y + ',' + cameraPosition.z);
 	if (!lockGridSize) {
 		cameraDistance = Math.sqrt(cameraPosition.x * cameraPosition.x + cameraPosition.y * cameraPosition.y + cameraPosition.z * cameraPosition.z);
@@ -262,17 +262,12 @@ function plotPoints() {
 		scene.remove(objectArray[i]);
 	}
 	objectArray = new Array();
-	//alert(typeof objectArray);
-    var selectedCubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
-	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
 	for (var i = 0; i < pointsArray.length; i++) {
-		var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
-		// using THREE.MeshFaceMaterial() in the constructor below
-		//   causes the mesh to use the materials stored in the geometry
+		var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
         if (typeof selectedPoint !== "undefined" && selectedPoint === i) {
-            objectArray[i] = new THREE.Mesh( cubeGeometry, selectedCubeMaterial );
+            objectArray[i] = new THREE.Mesh( pointGeometry, new THREE.MeshBasicMaterial(  { color: 0xff0000 } ));
         } else {
-		  objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+		    objectArray[i] = new THREE.Mesh( pointGeometry, new THREE.MeshBasicMaterial(  { color: 0xffffff } ));
         }
 		objectArray[i].position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
 		scene.add( objectArray[i] );	
@@ -318,54 +313,33 @@ function selectPoint() {
     sizeIncrementor = 0;
     //takes in selected point and redraws it as a colored point
     scene.remove(objectArray[selectedPoint]);
-    var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
-    var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
-    objectArray[selectedPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
+    var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+    objectArray[selectedPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
     objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
     scene.add( objectArray[selectedPoint] );
 }
 //takes old selected point, if it exists and redraws it as a normal point
 function pointDeselector(deselectPoint) {
-    scene.remove(objectArray[deselectPoint]);
-    var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
-    var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
-    objectArray[deselectPoint] = new THREE.Mesh( cubeGeometry, cubeMaterial );
-    objectArray[deselectPoint].position.set(pointsArray[deselectPoint][0], pointsArray[deselectPoint][1], pointsArray[deselectPoint][2]);
-    scene.add( objectArray[deselectPoint] );
+        scene.remove(objectArray[deselectPoint]);
+        var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xffffff } );
+        var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+        objectArray[deselectPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
+        objectArray[deselectPoint].position.set(pointsArray[deselectPoint][0], pointsArray[deselectPoint][1], pointsArray[deselectPoint][2]);
+        scene.add( objectArray[deselectPoint] );
 }
 function mouseSelector(e) {
     e.preventDefault();
-    /*mouseVector.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-    mouseVector.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-    var raycaster = projector.pickingRay( mouseVector.clone(), camera );
-    var intersects = raycaster.intersectObjects( objectArray );
-    var obj = intersects[0].object;
-    console.log(obj);*/
-    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     raycaster.setFromCamera( mouse, camera );
     var intersects = raycaster.intersectObjects( objectArray );
     if ( intersects.length > 0 ) {
-         intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+        //if there is already a selected point, deselect it
+        if (typeof selectedPoint !== "undefined") {
+            pointDeselector(selectedPoint);
+        }
+        selectedPoint = objectArray.indexOf(intersects[ 0 ].object);
+        selectPoint();
     }
-
-    /*
-    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-
-    raycaster.setFromCamera( mouse, camera );
-
-    var intersects = raycaster.intersectObjects( objects );
-
-    if ( intersects.length > 0 ) {
-
-        intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
-
-        var particle = new THREE.Sprite( particleMaterial );
-        particle.position.copy( intersects[ 0 ].point );
-        particle.scale.x = particle.scale.y = 16;
-        scene.add( particle );
-
-    }*/
-    //obj.material.color.setHex( 0x999999 );
 }

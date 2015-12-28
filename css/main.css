@@ -3,10 +3,13 @@ body
 	text-align: center;
 	font-family: Monospace;
 	font-weight: bold;
-	background-color: #ccccff;
+	background-color: #000000;
 	margin: 0px;
 	font-size: small;
 	overflow: hidden;
+}
+div#ThreeJS {
+    left: 0px;
 }
 div#controls {
 	border-style: solid;
@@ -46,4 +49,11 @@ div#authorInfo {
 	bottom: 2%;
 	width: 270px;
 	padding: 10px;
+}
+div#title {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;        
 }
