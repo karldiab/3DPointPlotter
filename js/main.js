@@ -48,11 +48,8 @@ function enterPoints(option) {
 		pointsArray = new Array();
 	}
 	var input = document.getElementById("pointsInput").value;
-	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
 	var subArray = new Array();
-	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 	while (input.length > 0) {
-		//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 		while (input.length > 0 && isNaN(input.charAt(0)) && input.charAt(0) !== '-' && input.charAt(0) !== '.') {
 			input = input.substr(1);
 			
@@ -74,8 +71,19 @@ function enterPoints(option) {
 	
 	outputPoints();
 	plotPoints();
-	
-
+}
+function removePoints(option) {
+    switch (option) {
+        case 0:
+            pointsArray = new Array();
+            break;
+        case 1:
+            console.log(selectedPoint);
+            pointsArray.splice(selectedPoint, 1);
+            selectedPoint = undefined;
+    }
+	outputPoints();
+	plotPoints();
 }
 function outputPoints() {
 	var outputPanel = document.getElementById("pointsOutput");
@@ -85,6 +93,7 @@ function outputPoints() {
 		var listItem = document.createElement("option");
 		var node = document.createTextNode(singlePoint);
 		listItem.appendChild(node);
+        listItem.setAttribute("id", "point" + i);
 		outputPanel.appendChild(listItem);
 	}
 
@@ -236,7 +245,7 @@ function animate()
 {
     requestAnimationFrame( animate );
     
-    if (typeof selectedPoint !== "undefined") {
+    if (typeof selectedPoint !== "undefined" && objectArray.length > selectedPoint) {
         sizeIncrementor += Math.PI/60
         var scaleFactor = (Math.cos(sizeIncrementor))/2 + 2
         objectArray[selectedPoint].scale.set( scaleFactor, scaleFactor, scaleFactor );
@@ -339,7 +348,10 @@ function mouseSelector(e) {
         if (typeof selectedPoint !== "undefined") {
             pointDeselector(selectedPoint);
         }
-        selectedPoint = objectArray.indexOf(intersects[ 0 ].object);
+        if (objectArray.indexOf(intersects[ 0 ].object) !== -1) {
+            selectedPoint = objectArray.indexOf(intersects[ 0 ].object);
+        }
         selectPoint();
+        document.getElementById("point" + selectedPoint).setAttribute("selected", "selected");
     }
 }
