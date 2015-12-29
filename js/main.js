@@ -131,6 +131,7 @@ function init()
     projector = new THREE.Projector();
     mouseVector = new THREE.Vector2();
     window.addEventListener( 'click', mouseSelector, false );
+    //window.addEventListener( 'mousemove', mouseHover, false );
 }
 /*This function is called whenever the user makes a change to the options panel
 and makes the change to the appropriate variable, then redraws */
@@ -354,4 +355,51 @@ function mouseSelector(e) {
         selectPoint();
         document.getElementById("point" + selectedPoint).setAttribute("selected", "selected");
     }
+}
+function colorHoverPoint() {
+    scene.remove(objectArray[hoverPoint]);
+    var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xffff00 } );
+    var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+    objectArray[hoverPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
+    objectArray[hoverPoint].position.set(pointsArray[hoverPoint][0], pointsArray[hoverPoint][1], pointsArray[hoverPoint][2]);
+    scene.add( objectArray[hoverPoint] );
+}
+function mouseHover(e) {
+    e.preventDefault();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, camera );
+    var intersects = raycaster.intersectObjects( objectArray );
+    if ( intersects.length > 0 ) {
+        var tempHoverPoint = objectArray.indexOf(intersects[ 0 ].object);
+        if (typeof hoverPoint !== "undefined" && hoverPoint !== tempHoverPoint) {
+            console.log("now");
+            //pointDeselector(hoverPoint);
+        }
+        if (typeof selectedPoint === "undefined" || (typeof selectedPoint !== "undefined" && selectedPoint !== tempHoverPoint)) {
+            hoverPoint = tempHoverPoint;
+            colorHoverPoint();
+        }
+    } else if (typeof hoverPoint !== "undefined" && (typeof selectedPoint === "undefined" || (typeof selectedPoint !== "undefined" && selectedPoint !== hoverPoint))){
+        console.log(hoverPoint);
+        pointDeselector(hoverPoint);
+    }
+    /*if ( intersects.length > 0) {
+        var newHoverPoint = objectArray.indexOf(intersects[ 0 ].object);
+    } else {
+        var newHoverPoint = -1;
+    }
+    if (newHoverPoint !== -1 && (typeof selectedPoint === "undefined" ||(typeof selectedPoint !== "undefined" && newHoverPoint !== selectedPoint))) {
+            if (typeof hoverPoint !== "undefined" && newHoverPoint !== hoverPoint) {
+                pointDeselector(hoverPoint);
+            }
+            if (typeof selectedPoint === "undefined" || hoverPoint !== selectedPoint) {
+                console.log('hi');
+                hoverPoint = newHoverPoint;
+                colorHoverPoint();
+            }
+        } else if (typeof hoverPoint !== "undefined" || typeof selectedPoint !== "undefined" && hoverPoint !== selectedPoint) {
+            pointDeselector(hoverPoint);
+        }*/
+     
 }
