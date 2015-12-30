@@ -127,7 +127,7 @@ function init()
     mouse = new THREE.Vector2();
     projector = new THREE.Projector();
     mouseVector = new THREE.Vector2();
-    window.addEventListener( 'click', mouseSelector, false );
+    window.addEventListener( 'mouseup', mouseSelector, false );
     //window.addEventListener( 'mousemove', mouseHover, false );
 }
 /*This function is called whenever the user makes a change to the options panel
