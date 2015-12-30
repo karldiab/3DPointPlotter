@@ -119,9 +119,6 @@ function init()
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
 	THREEx.WindowResize(renderer, camera);
-	//THREEx.WindowResize(renderer, camera);
-	// toggle full-screen on given key press
-	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	changeOptions();

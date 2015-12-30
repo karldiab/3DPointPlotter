@@ -74,8 +74,7 @@
 								<h5>Enter Multiple Points</h5><br/>
 								<textarea name="pointsInput" id="pointsInput" rows="5" placeholder="Paste your list of points in here"></textarea><br />
 								<div class="btn-group">
-								<button class="btn btn-danger btn-sm" onclick="enterPoints(0)">Replace</button>
-								<button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add</button>
+								<button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add Points</button>
 								</div>
 								<hr />
 								<div id="outputPoints">
@@ -83,7 +82,7 @@
 									<hr />
 									<h4>Plotted Points</h4><br/>
 									<select name="pointsOutput" id="pointsOutput" size="8" onchange="listSelector.call(this, event);")></select>
-                                    <div class="btn-group">
+                                    <br/><div class="btn-group">
                                     <button class="btn btn-warning btn-sm" onclick="removePoints(1)">Remove Selected</button>
                                     <button class="btn btn-danger btn-sm" onclick="removePoints(0)">Clear All</button>
                                     </div>
