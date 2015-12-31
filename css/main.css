@@ -67,3 +67,9 @@ div#instructions {
 #instructions h6 {
     text-align: center;
 }
+div#logo {
+    z-index: 2;
+	position: absolute;
+    top: 4px;
+    left: 4px;
+}

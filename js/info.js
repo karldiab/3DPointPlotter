@@ -15,7 +15,7 @@ $(function()
 	.css(
 	{ "z-index":"2",
 	  "background":"rgba(0,0,0,0)", "opacity":"0.9", 
-	  "position":"absolute", "top":"4px", "left":"4px"
+	  "position":"absolute", "top":"4px", "right":"4px"
 	}) // adds CSS
     .append("<img width='32' height='32' src='images/icon-info.png'/>")
     .button()

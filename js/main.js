@@ -450,3 +450,7 @@ function mouseHover(e) {
         }*/
      
 }
+function opennewtab(url )
+{
+  var win=window.open(url, '_blank');
+}
