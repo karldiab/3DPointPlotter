@@ -13,9 +13,12 @@ var objectArray = [];
 //Default point size;
 var pointSize = 0.5;
 var raycaster;
-
-// custom global variables
-var cube;
+//Default viewing option variables
+var xGrid = true;
+var yGrid = false;
+var zGrid = false;
+var lockGridSize = true;
+var axisHelper = false;
 
 // initialization
 init();
@@ -127,17 +130,64 @@ function init()
     mouse = new THREE.Vector2();
     projector = new THREE.Projector();
     mouseVector = new THREE.Vector2();
-    window.addEventListener( 'mouseup', mouseSelector, false );
+    window.addEventListener( 'click', mouseSelector, false );
     //window.addEventListener( 'mousemove', mouseHover, false );
 }
 /*This function is called whenever the user makes a change to the options panel
 and makes the change to the appropriate variable, then redraws */
-function changeOptions() {
-	xGrid = document.getElementById("xGrid").checked;
+function changeOptions(option) {
+    switch (option) {
+        case 0:
+        if (axisHelper) {
+            axisHelper = false;
+            document.getElementById("axisHelper").innerHTML = "Show Axis";
+        } else {
+            axisHelper = true;
+            document.getElementById("axisHelper").innerHTML = "Hide Axis";
+        }
+        break;
+        case 1:
+        if (lockGridSize) {
+            lockGridSize = false;
+            document.getElementById("lockGridSize").innerHTML = "Lock Grid Size";
+        } else {
+            lockGridSize = true;
+            document.getElementById("lockGridSize").innerHTML = "Unlock Grid Size";
+        }
+        break;
+        case 2:
+        if (xGrid) {
+            xGrid = false;
+            document.getElementById("xGrid").innerHTML = "Show XZ Grid";
+        } else {
+            xGrid = true;
+            document.getElementById("xGrid").innerHTML = "Hide XZ Grid";
+        }
+        break;
+        case 3:
+        if (yGrid) {
+            yGrid = false;
+            document.getElementById("yGrid").innerHTML = "Show XY Grid";
+        } else {
+            yGrid = true;
+            document.getElementById("yGrid").innerHTML = "Hide XY Grid";
+        }
+        break;
+        case 4:
+        if (zGrid) {
+            zGrid = false;
+            document.getElementById("zGrid").innerHTML = "Show YZ Grid";
+        } else {
+            zGrid = true;
+            document.getElementById("zGrid").innerHTML = "Hide YZ Grid";
+        }
+        break;
+    };
+	/*xGrid = document.getElementById("xGrid").checked;
 	yGrid = document.getElementById("yGrid").checked;
-	zGrid = document.getElementById("zGrid").checked;
-	lockGridSize = document.getElementById("lockGridSize").checked;
-	axisHelper = document.getElementById("axisHelper").checked;
+	zGrid = document.getElementById("zGrid").checked;*/
+	//lockGridSize = document.getElementById("lockGridSize").checked;
+	//axisHelper = document.getElementById("axisHelper").checked;
 	incrementValue = document.getElementById("incrementValue").value;
 	var currentPointSize = pointSize;
 	pointSize = document.getElementById("pointSize").value;
