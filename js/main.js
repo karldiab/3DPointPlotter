@@ -9,12 +9,16 @@ var container, scene, camera, renderer, controls, stats;
 var clock = new THREE.Clock();
 //Hard codes a set of points are sample starter points;
 var pointsArray = [[0.000,-7.136,-18.683],[-7.136,-18.683,0.000],[-18.683,0.000,-7.136],[-11.547,-11.547,-11.547],[-11.547,-11.547,11.547],[0.000,-7.136,18.683],[-7.136,18.683,0.000],[-18.683,0.000,7.136],[-11.547,11.547,-11.547],[-11.547,11.547,11.547],[0.000,7.136,-18.683],[7.136,-18.683,0.000],[18.683,0.000,-7.136],[11.547,-11.547,-11.547],[11.547,-11.547,11.547],[0.000,7.136,18.683],[7.136,18.683,0.000],[18.683,0.000,7.136],[11.547,11.547,-11.547],[11.547,11.547,11.547]]
-var objectArray = new Array();
+var objectArray = [];
 //Default point size;
 var pointSize = 0.5;
-
-// custom global variables
-var cube;
+var raycaster;
+//Default viewing option variables
+var xGrid = true;
+var yGrid = false;
+var zGrid = false;
+var lockGridSize = true;
+var axisHelper = false;
 
 // initialization
 init();
@@ -25,7 +29,7 @@ animate();
 inputs them into an array to be plotted*/
 
 function addPoint() {
-	var subArray = new Array();
+	var subArray = [];
 	var xAdd = document.getElementById("xAdd").value;
 	subArray.push(xAdd);
 	document.getElementById("xAdd").value = "";
@@ -47,11 +51,8 @@ function enterPoints(option) {
 		pointsArray = new Array();
 	}
 	var input = document.getElementById("pointsInput").value;
-	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + input;
 	var subArray = new Array();
-	//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 	while (input.length > 0) {
-		//document.getElementById("pointsOutput").innerHTML = document.getElementById("pointsOutput").value + "\n" + input.length;
 		while (input.length > 0 && isNaN(input.charAt(0)) && input.charAt(0) !== '-' && input.charAt(0) !== '.') {
 			input = input.substr(1);
 			
@@ -73,8 +74,19 @@ function enterPoints(option) {
 	
 	outputPoints();
 	plotPoints();
-	
-
+}
+function removePoints(option) {
+    switch (option) {
+        case 0:
+            pointsArray = new Array();
+            break;
+        case 1:
+            console.log(selectedPoint);
+            pointsArray.splice(selectedPoint, 1);
+            selectedPoint = undefined;
+    }
+	outputPoints();
+	plotPoints();
 }
 function outputPoints() {
 	var outputPanel = document.getElementById("pointsOutput");
@@ -84,13 +96,13 @@ function outputPoints() {
 		var listItem = document.createElement("option");
 		var node = document.createTextNode(singlePoint);
 		listItem.appendChild(node);
+        listItem.setAttribute("id", "point" + i);
 		outputPanel.appendChild(listItem);
 	}
 
 }
 function init() 
 {
-
 	scene = new THREE.Scene();
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
@@ -101,45 +113,81 @@ function init()
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	// add the camera to the scene
 	scene.add(camera);
-
 	camera.position.set(0,150,100);
-
-
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
 		renderer = new THREE.CanvasRenderer(); 
-	
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
 	THREEx.WindowResize(renderer, camera);
-	//THREEx.WindowResize(renderer, camera);
-	// toggle full-screen on given key press
-	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-
-	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	// scene.add(skyBox);
-	
-	// fog must be added to scene before first render
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	changeOptions();
 	plotPoints();
-	//createGrids();
-	
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+    projector = new THREE.Projector();
+    mouseVector = new THREE.Vector2();
+    window.addEventListener( 'click', mouseSelector, false );
+    //window.addEventListener( 'mousemove', mouseHover, false );
 }
 /*This function is called whenever the user makes a change to the options panel
 and makes the change to the appropriate variable, then redraws */
-function changeOptions() {
-	xGrid = document.getElementById("xGrid").checked;
+function changeOptions(option) {
+    switch (option) {
+        case 0:
+        if (axisHelper) {
+            axisHelper = false;
+            document.getElementById("axisHelper").innerHTML = "Show Axis";
+        } else {
+            axisHelper = true;
+            document.getElementById("axisHelper").innerHTML = "Hide Axis";
+        }
+        break;
+        case 1:
+        if (lockGridSize) {
+            lockGridSize = false;
+            document.getElementById("lockGridSize").innerHTML = "Lock Grid Size";
+        } else {
+            lockGridSize = true;
+            document.getElementById("lockGridSize").innerHTML = "Unlock Grid Size";
+        }
+        break;
+        case 2:
+        if (xGrid) {
+            xGrid = false;
+            document.getElementById("xGrid").innerHTML = "Show XZ Grid";
+        } else {
+            xGrid = true;
+            document.getElementById("xGrid").innerHTML = "Hide XZ Grid";
+        }
+        break;
+        case 3:
+        if (yGrid) {
+            yGrid = false;
+            document.getElementById("yGrid").innerHTML = "Show XY Grid";
+        } else {
+            yGrid = true;
+            document.getElementById("yGrid").innerHTML = "Hide XY Grid";
+        }
+        break;
+        case 4:
+        if (zGrid) {
+            zGrid = false;
+            document.getElementById("zGrid").innerHTML = "Show YZ Grid";
+        } else {
+            zGrid = true;
+            document.getElementById("zGrid").innerHTML = "Hide YZ Grid";
+        }
+        break;
+    };
+	/*xGrid = document.getElementById("xGrid").checked;
 	yGrid = document.getElementById("yGrid").checked;
-	zGrid = document.getElementById("zGrid").checked;
-	lockGridSize = document.getElementById("lockGridSize").checked;
-	axisHelper = document.getElementById("axisHelper").checked;
+	zGrid = document.getElementById("zGrid").checked;*/
+	//lockGridSize = document.getElementById("lockGridSize").checked;
+	//axisHelper = document.getElementById("axisHelper").checked;
 	incrementValue = document.getElementById("incrementValue").value;
 	var currentPointSize = pointSize;
 	pointSize = document.getElementById("pointSize").value;
@@ -162,7 +210,7 @@ function createGrids() {
 		cameraDistance = 150;
 	}
 	cameraPosition = new THREE.Vector3();
-	cameraPosition.getPositionFromMatrix( camera.matrixWorld );
+	cameraPosition.setFromMatrixPosition( camera.matrixWorld );
 	//alert(cameraPosition.x + ',' + cameraPosition.y + ',' + cameraPosition.z);
 	if (!lockGridSize) {
 		cameraDistance = Math.sqrt(cameraPosition.x * cameraPosition.x + cameraPosition.y * cameraPosition.y + cameraPosition.z * cameraPosition.z);
@@ -244,6 +292,12 @@ function samplePoints(sampleNumber) {
 function animate() 
 {
     requestAnimationFrame( animate );
+    
+    if (typeof selectedPoint !== "undefined" && objectArray.length > selectedPoint) {
+        sizeIncrementor += Math.PI/60
+        var scaleFactor = (Math.cos(sizeIncrementor))/2 + 2
+        objectArray[selectedPoint].scale.set( scaleFactor, scaleFactor, scaleFactor );
+    }
 	createGrids();
 	toggleAxes();
 	render();		
@@ -265,13 +319,13 @@ function plotPoints() {
 		scene.remove(objectArray[i]);
 	}
 	objectArray = new Array();
-	//alert(typeof objectArray);
-	var cubeMaterial = new THREE.MeshBasicMaterial(  { color: 0x000000 } );
 	for (var i = 0; i < pointsArray.length; i++) {
-		var cubeGeometry = new THREE.CubeGeometry( pointSize, pointSize, pointSize);
-		// using THREE.MeshFaceMaterial() in the constructor below
-		//   causes the mesh to use the materials stored in the geometry
-		objectArray[i] = new THREE.Mesh( cubeGeometry, cubeMaterial );
+		var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+        if (typeof selectedPoint !== "undefined" && selectedPoint === i) {
+            objectArray[i] = new THREE.Mesh( pointGeometry, new THREE.MeshBasicMaterial(  { color: 0xff0000 } ));
+        } else {
+		    objectArray[i] = new THREE.Mesh( pointGeometry, new THREE.MeshBasicMaterial(  { color: 0xffffff } ));
+        }
 		objectArray[i].position.set(pointsArray[i][0], pointsArray[i][1], pointsArray[i][2]);
 		scene.add( objectArray[i] );	
 	};
@@ -300,4 +354,99 @@ function autoZoom() {
 		}
 	}
 	camera.position.set(100,0,100);
+}
+
+function listSelector(event) {
+    //if there is already a selected point, deselect it
+    if (typeof selectedPoint !== "undefined") {
+        pointDeselector(selectedPoint);
+    }
+    selectedPoint = parseInt(this.options[this.selectedIndex].text);
+    selectPoint();
+}
+/*Takes in the currently selected point and redraws it as red*/
+function selectPoint() {
+    //global variable is used by animator function to allow selected point's size to fluctuate
+    sizeIncrementor = 0;
+    //takes in selected point and redraws it as a colored point
+    scene.remove(objectArray[selectedPoint]);
+    var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xff0000 } );
+    var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+    objectArray[selectedPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
+    objectArray[selectedPoint].position.set(pointsArray[selectedPoint][0], pointsArray[selectedPoint][1], pointsArray[selectedPoint][2]);
+    scene.add( objectArray[selectedPoint] );
+}
+//takes old selected point, if it exists and redraws it as a normal point
+function pointDeselector(deselectPoint) {
+        scene.remove(objectArray[deselectPoint]);
+        var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xffffff } );
+        var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+        objectArray[deselectPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
+        objectArray[deselectPoint].position.set(pointsArray[deselectPoint][0], pointsArray[deselectPoint][1], pointsArray[deselectPoint][2]);
+        scene.add( objectArray[deselectPoint] );
+}
+function mouseSelector(e) {
+    e.preventDefault();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, camera );
+    var intersects = raycaster.intersectObjects( objectArray );
+    if ( intersects.length > 0 ) {
+        //if there is already a selected point, deselect it
+        if (typeof selectedPoint !== "undefined") {
+            pointDeselector(selectedPoint);
+        }
+        if (objectArray.indexOf(intersects[ 0 ].object) !== -1) {
+            selectedPoint = objectArray.indexOf(intersects[ 0 ].object);
+        }
+        selectPoint();
+        document.getElementById("point" + selectedPoint).setAttribute("selected", "selected");
+    }
+}
+function colorHoverPoint() {
+    scene.remove(objectArray[hoverPoint]);
+    var pointMaterial = new THREE.MeshBasicMaterial(  { color: 0xffff00 } );
+    var pointGeometry = new THREE.SphereGeometry( pointSize, 8, 8 );
+    objectArray[hoverPoint] = new THREE.Mesh( pointGeometry, pointMaterial );
+    objectArray[hoverPoint].position.set(pointsArray[hoverPoint][0], pointsArray[hoverPoint][1], pointsArray[hoverPoint][2]);
+    scene.add( objectArray[hoverPoint] );
+}
+function mouseHover(e) {
+    e.preventDefault();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, camera );
+    var intersects = raycaster.intersectObjects( objectArray );
+    if ( intersects.length > 0 ) {
+        var tempHoverPoint = objectArray.indexOf(intersects[ 0 ].object);
+        if (typeof hoverPoint !== "undefined" && hoverPoint !== tempHoverPoint) {
+            console.log("now");
+            //pointDeselector(hoverPoint);
+        }
+        if (typeof selectedPoint === "undefined" || (typeof selectedPoint !== "undefined" && selectedPoint !== tempHoverPoint)) {
+            hoverPoint = tempHoverPoint;
+            colorHoverPoint();
+        }
+    } else if (typeof hoverPoint !== "undefined" && (typeof selectedPoint === "undefined" || (typeof selectedPoint !== "undefined" && selectedPoint !== hoverPoint))){
+        console.log(hoverPoint);
+        pointDeselector(hoverPoint);
+    }
+    /*if ( intersects.length > 0) {
+        var newHoverPoint = objectArray.indexOf(intersects[ 0 ].object);
+    } else {
+        var newHoverPoint = -1;
+    }
+    if (newHoverPoint !== -1 && (typeof selectedPoint === "undefined" ||(typeof selectedPoint !== "undefined" && newHoverPoint !== selectedPoint))) {
+            if (typeof hoverPoint !== "undefined" && newHoverPoint !== hoverPoint) {
+                pointDeselector(hoverPoint);
+            }
+            if (typeof selectedPoint === "undefined" || hoverPoint !== selectedPoint) {
+                console.log('hi');
+                hoverPoint = newHoverPoint;
+                colorHoverPoint();
+            }
+        } else if (typeof hoverPoint !== "undefined" || typeof selectedPoint !== "undefined" && hoverPoint !== selectedPoint) {
+            pointDeselector(hoverPoint);
+        }*/
+     
 }

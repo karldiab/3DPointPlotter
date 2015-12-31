@@ -3,11 +3,15 @@ body
 	text-align: center;
 	font-family: Monospace;
 	font-weight: bold;
-	background-color: #ccccff;
+	background-color: #000000;
 	margin: 0px;
 	font-size: small;
 	overflow: hidden;
 }
+div#ThreeJS {
+    left: 0px;
+}
+
 div#controls {
 	border-style: solid;
 	border-width: 3px;
@@ -18,6 +22,10 @@ div#controls {
 	height: 100%;
 	width: 270px;
     overflow-y: auto;
+    pointer-events: inherit;
+}
+div#controls button {
+    margin: 2px;
 }
 div#points {
 	padding: 10px;
@@ -31,12 +39,6 @@ div#points {
 	width: 300px;
     overflow-y: auto;
 }
-div#outputPoints {
-	position: fixed;
-	bottom: 2%;
-	width: 300px;
-
-}
 select#pointsOutput {
 	overflow: auto;
 	width: 80%;
@@ -46,4 +48,22 @@ div#authorInfo {
 	bottom: 2%;
 	width: 270px;
 	padding: 10px;
+}
+div#title {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;        
+}
+div#instructions {
+    width: 100%; 
+    height: 200px; 
+    overflow-y: scroll; 
+    text-align: left;
+}
+#instructions h4,
+#instructions h5,
+#instructions h6 {
+    text-align: center;
 }
