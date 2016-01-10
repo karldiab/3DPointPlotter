@@ -9,134 +9,129 @@
     <link rel=stylesheet href="css/main.css"/>
 </head>
 <body>
-
-<script src="js/three.min.js"></script>
-<script src="js/Detector.js"></script>
-<script src="js/OrbitControls.js"></script>
-<script src="js/Projector.js"></script>
-<script src="js/CanvasRenderer.js"></script>
-<script src="js/THREEx.WindowResize.js"></script>
-<!-- jQuery code to display an information button and box when clicked. -->
-<script src="js/jquery-1.9.1.js"></script>
-<script src="js/jquery-ui.js"></script>
-<link rel=stylesheet href="css/jquery-ui.css" />
-<link rel=stylesheet href="css/info.css"/>
-<script src="js/info.js"></script>
-<div id="logo"><a target="_blank" href="http://www.karldiab.com"><img src="images/logoinverted32.png" alt="Logo" onclick="opennewtab('http://www.karldiab.com')"/></a></div>
-<div id="infoButton"></div>
-
-
-			<div class="row">
-				<div class="col-xs-12" id="title">
-					<h1>3D Point Plotter</h1>
-				</div>
-			</div>
-						<div id="ThreeJS"></div>
-					<div id="controls">
-
-								<h3>Viewing Options</h3><br />
-                                <button class="btn btn-primary btn-xs" id="axisHelper" onclick="changeOptions(0)">Show Axis</button>
-                                <button class="btn btn-warning btn-xs" id="lockGridSize" onclick="changeOptions(1)">Unlock Grid Size</button>
-                                <button class="btn btn-info btn-xs" id="xGrid" onclick="changeOptions(2)">Hide XZ Grid</button>
-                                <button class="btn btn-info btn-xs" id="yGrid" onclick="changeOptions(3)">Show XY Grid</button>
-                                <button class="btn btn-info btn-xs" id="zGrid" onclick="changeOptions(4)">Show YZ Grid</button>
-								<form onchange="changeOptions()">
-								<p id="currentGridSize">Grid Detail: 20</p>
-								<input id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
-								<p id="currentPointSize">Point Size: 1.5</p>
-								<input id="pointSize" type="range" min="0.1" max="5" step="0.1" value="1.5" /><br /><hr />
-								</form>
-							<p>Sample Point Sets</p><br />
-							<div>
-								<button class="btn btn-success btn-xs" onclick="samplePoints(0);">Cube</button>
-								<button class="btn btn-success btn-xs" onclick="samplePoints(1);">Dodecahedron</button>
-								<button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random</button><br />
-							</div>
-							<div id="authorInfo">
-								<hr />
-
-							</div>
-					</div>
-					<div id="points">
-								<h5>Enter Single Point</h5><br/>
-								<strong>X: </strong><input type="text" size="5" id="xAdd"></input>
-								<strong>Y: </strong><input type="text" size="5" id="yAdd"></input>
-								<strong>Z: </strong><input type="text" size="5" id="zAdd"></input>
-								<button class="btn btn-success btn-xs" onclick="addPoint()">Add</button>
-								<hr />
-								<h5>Enter Multiple Points</h5><br/>
-								<textarea name="pointsInput" id="pointsInput" rows="5" placeholder="Paste your list of points in here"></textarea><br />
-								<div class="btn-group">
-								<button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add Points</button>
-								</div>
-									
-									<hr />
-									<h3>Plotted Points</h4><br/>
-									<select name="pointsOutput" id="pointsOutput" size="8" onchange="listSelector.call(this, event);")></select>
-                                    <br/><div class="btn-group">
-                                    <button class="btn btn-warning btn-sm" onclick="removePoints(1)">Remove Selected</button>
-                                    <button class="btn btn-danger btn-sm" onclick="removePoints(0)">Clear All</button>
-								</div>
-					</div>
-
-<script src="js/main.js"></script>
+    <script src="js/three.min.js"></script>
+    <script src="js/Detector.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/Projector.js"></script>
+    <script src="js/CanvasRenderer.js"></script>
+    <script src="js/THREEx.WindowResize.js"></script>
+    <!-- jQuery code to display an information button and box when clicked. -->
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <link rel=stylesheet href="css/jquery-ui.css" />
+    <link rel=stylesheet href="css/info.css"/>
+    <script src="js/info.js"></script>
+    <div id="screenTooSmall">
+        <h1>:(</h1>
+        <h3>This utility won't work on such a narrow display. If you're on a phone, maybe try turning it to landscape mode.</h3>
+        <a target="_blank" href="http://www.karldiab.com"><button class="btn btn-success" onclick="opennewtab('http://www.karldiab.com')">Back to Website</button></a>
+        
+    </div>
+    <div id="title">
+        <div id="logo"><a target="_blank" href="http://www.karldiab.com"><img src="images/logoinverted32.png" alt="Logo" onclick="opennewtab('http://www.karldiab.com')"/></a></div>
+        <div id="infoButton"></div>
+        <h1>3D Point Plotter</h1>
+    </div>
+            <div id="ThreeJS"></div>
+        <div id="controls">
+            <h3>Viewing Options</h3><br />
+            <button class="btn btn-primary btn-xs" id="axisHelper" onclick="changeOptions(0)">Show Axis</button>
+            <button class="btn btn-warning btn-xs" id="lockGridSize" onclick="changeOptions(1)">Unlock Grid Size</button>
+            <button class="btn btn-info btn-xs" id="xGrid" onclick="changeOptions(2)">Hide XZ Grid</button>
+            <button class="btn btn-info btn-xs" id="yGrid" onclick="changeOptions(3)">Show XY Grid</button>
+            <button class="btn btn-info btn-xs" id="zGrid" onclick="changeOptions(4)">Show YZ Grid</button>
+            <form onchange="changeOptions()">
+            <p id="currentGridSize">Grid Detail: 20</p>
+            <input id="incrementValue" type="range" min="1" max="50" step="1" value="20" /><br/>
+            <p id="currentPointSize">Point Size: 1.5</p>
+            <input id="pointSize" type="range" min="0.1" max="5" step="0.1" value="1.5" /><br /><hr />
+            </form>
+            <p>Sample Point Sets</p><br />
+            <div>
+                <button class="btn btn-success btn-xs" onclick="samplePoints(0);">Cube</button>
+                <button class="btn btn-success btn-xs" onclick="samplePoints(1);">Dodecahedron</button>
+                <button class="btn btn-success btn-xs" onclick="samplePoints(2);">Random</button><br />
+            </div>
+        </div>
+        <div id="points">
+            <h4>Enter Single Point</h4><br/>
+            <strong>X: </strong><input type="text" size="4" id="xAdd"></input>
+            <strong>Y: </strong><input type="text" size="4" id="yAdd"></input>
+            <strong>Z: </strong><input type="text" size="4" id="zAdd"></input>
+            <button class="btn btn-success btn-xs" onclick="addPoint()">Add</button>
+            <hr />
+            <h4>Enter Multiple Points</h4><br/>
+            <textarea name="pointsInput" id="pointsInput" rows="5" placeholder="Paste your list of points in here"></textarea><br />
+            <div class="btn-group">
+                <button class="btn btn-success btn-sm" onclick="enterPoints(1)">Add Points</button>
+            </div>
+                <hr />
+                <h3>Plotted Points</h4><br/>
+                <select name="pointsOutput" id="pointsOutput" size="8" onchange="listSelector.call(this, event);")></select>
+                <br/>
+                <div class="btn-group">
+                    <button class="btn btn-warning btn-sm" onclick="removePoints(1)">Remove Selected</button>
+                    <button class="btn btn-danger btn-sm" onclick="removePoints(0)">Clear All</button>
+                </div>
+        </div>
+    <script src="js/main.js"></script>
 
 
-<div id="infoBox" title="3D Point Plotter Info">
-								<h3>Author: Karl Diab</h4><br/>
-								<p>A flexible 3D point plotter utility that allows for the easy plotting and viewing of up to thousands 
-                                    of 3D point. Written in JavaScript using the THREE.js library. You may
-									link to this page from elsewhere or use the source code, but please give credit where it is due.
-								</p>
-                                <h3>Instructions</h3>
-                                <div id="instructions">
-                                <h4><b>Camera</b></h4>
-                                <p>Drag the mouse to rotate camera and scroll to zoom. Right-click drag to move camera.<br/><hr/>
-                                <h4><b>Adding Points</b></h4>
-                                   Add 3D points on the right, either individually or in bulk.<hr/>
-                                   <h5><b>Add Individual Points</b></h5>
-                                   To add a point individually, enter the X Y Z coordinates 
-                                   at the top and click <button class="btn btn-success btn-xs">Add</button>.
-                                   <h5><b>Add Bulk Points</b></h5> 
-                                   To add points in bulk, simply paste the points in the "Enter Multiple Points" window and click 
-                                   <button class="btn btn-success btn-xs">Add Points</button>. 
-                                   The program will interpret the points then plot and list them. The interpreter can understand points in almost
-                                    any format, even with additional characters such as "(" or ",". Ensure no extra numbers are included. <br/>
-                                    <h6><b>Good:</b><h6/><br/>
-                                    (x1,y1,z1),(x2,y2,z2)...<br/>
-                                    x1,y1,z1,x2,y2,z2...<br/>
-                                    (x1,y1,z1)<br/>
-                                    (x2,y2,z2)...<br/>
-                                    <h6><b>Bad:</b><h6/><br/>
-                                    1: (x1,y1,z1) 2: (x1,y1,z1)...<hr/>
-                                   <h4><b>Manipulating Points</b></h4>
-                                   To clear all points click <button class="btn btn-danger btn-xs">Clear All</button> below the "Plotted Points" window. An individual point can be 
-                                   deleted by pressing <button class="btn btn-warning btn-xs">Remove Selected</button>.
-                                   <h5><b>Selecting Points</b></h5>
-                                   Any point can be selected by clicking on the plotted point, or from the "Plotted Points" window.
-                                   <br/>
-                                   <h4><b>Viewing Options</b></h4>
-                                   To view or disable the grids or axis, check or uncheck the corresponding box in the left panel. To change the
-                                    size of the grids, uncheck the "Lock Grid Size" box. The grid size will now follow the camera distance. Zoom in
-                                     or out with the scroll wheel until the desired size is reached and recheck the "Lock Grid Size" box.<br/>
-                                     The level of detail on the grids can be changed with the "Grid Detail" slider. <br/>
-                                     Point size can be changed with the "Point Size" slider.<br/>
-                                   </div>
-                                   
+    <div id="infoBox" title="3D Point Plotter Info">
+        <h3>Author: Karl Diab</h4><br/>
+        <p>A flexible 3D point plotter utility that allows for the easy plotting and viewing of up to thousands 
+            of 3D point. Written in JavaScript using the THREE.js library. You may
+            link to this page from elsewhere or use the source code, but please give credit where it is due.
+        </p>
+        <h3>Instructions</h3>
+        <div id="instructions">
+        <h4><b>Camera</b></h4>
+        <p>Drag the mouse to rotate camera and scroll to zoom. Right-click drag to move camera.<br/><hr/>
+        <h4><b>Adding Points</b></h4>
+            Add 3D points on the right, either individually or in bulk.<hr/>
+            <h5><b>Add Individual Points</b></h5>
+            To add a point individually, enter the X Y Z coordinates 
+            at the top and click <button class="btn btn-success btn-xs">Add</button>.
+            <h5><b>Add Bulk Points</b></h5> 
+            To add points in bulk, simply paste the points in the "Enter Multiple Points" window and click 
+            <button class="btn btn-success btn-xs">Add Points</button>. 
+            The program will interpret the points then plot and list them. The interpreter can understand points in almost
+            any format, even with additional characters such as "(" or ",". Ensure no extra numbers are included. <br/>
+            <h6><b>Good:</b><h6/><br/>
+            (x1,y1,z1),(x2,y2,z2)...<br/>
+            x1,y1,z1,x2,y2,z2...<br/>
+            (x1,y1,z1)<br/>
+            (x2,y2,z2)...<br/>
+            <h6><b>Bad:</b><h6/><br/>
+            1: (x1,y1,z1) 2: (x1,y1,z1)...<hr/>
+            <h4><b>Manipulating Points</b></h4>
+            To clear all points click <button class="btn btn-danger btn-xs">Clear All</button> below the "Plotted Points" window. An individual point can be 
+            deleted by pressing <button class="btn btn-warning btn-xs">Remove Selected</button>.
+            <h5><b>Selecting Points</b></h5>
+            Any point can be selected by clicking on the plotted point, or from the "Plotted Points" window.
+            <br/>
+            <h4><b>Viewing Options</b></h4>
+            To view or disable the grids or axis, check or uncheck the corresponding box in the left panel. To change the
+            size of the grids, uncheck the "Lock Grid Size" box. The grid size will now follow the camera distance. Zoom in
+                or out with the scroll wheel until the desired size is reached and recheck the "Lock Grid Size" box.<br/>
+                The level of detail on the grids can be changed with the "Grid Detail" slider. <br/>
+                Point size can be changed with the "Point Size" slider.<br/>
+            </div>
+            
 
-                                </p>
-								<a target="_blank" href="https://github.com/karldiab/3DPointPlotter"><button class="btn btn-primary" onclick="opennewtab('https://github.com/karldiab/3DPointPlotter')">Source Code</button></a>
-                                <a target="_blank" href="http://www.karldiab.com"><button class="btn btn-success" onclick="opennewtab('http://www.karldiab.com')">Website</button></a>
-                                <h3>Comments/Suggestions</h4>
-                                               <script>document.write('<'+'a'+' '+'h'+'r'+'e'+'f'+'='+"'"+'&'+'#'+'1'+'0'+'9'+';'+'a'+'i'+'l'+'t'+'&'+'#'+'1'+'1'+'1'+';'+
-'&'+'#'+'5'+'8'+';'+'&'+'#'+'3'+'7'+';'+'&'+'#'+'5'+'4'+';'+'&'+'#'+'6'+'6'+';'+'a'+'&'+'#'+'1'+'1'+
-'4'+';'+'&'+'#'+'3'+'7'+';'+'6'+'C'+'&'+'#'+'6'+'4'+';'+'&'+'#'+'3'+'7'+';'+'&'+'#'+'5'+'4'+';'+'B'+
-'%'+'6'+'1'+'&'+'#'+'3'+'7'+';'+'7'+'2'+'%'+'&'+'#'+'5'+'4'+';'+'C'+'%'+'&'+'#'+'5'+'4'+';'+'&'+'#'+
-'5'+'2'+';'+'&'+'#'+'1'+'0'+'5'+';'+'a'+'b'+'&'+'#'+'4'+'6'+';'+'c'+'o'+'&'+'#'+'3'+'7'+';'+'6'+'D'+
-"'"+'>'+'k'+'&'+'#'+'9'+'7'+';'+'r'+'l'+'&'+'#'+'6'+'4'+';'+'k'+'a'+'r'+'l'+'d'+'i'+'&'+'#'+'9'+'7'+
-';'+'&'+'#'+'9'+'8'+';'+'&'+'#'+'4'+'6'+';'+'&'+'#'+'9'+'9'+';'+'o'+'&'+'#'+'1'+'0'+'9'+';'+'<'+'/'+
-'a'+'>');</script><noscript>[Turn on JavaScript to see the email address]</noscript>
-</div>
+        </p>
+        <a target="_blank" href="https://github.com/karldiab/3DPointPlotter"><button class="btn btn-primary" onclick="opennewtab('https://github.com/karldiab/3DPointPlotter')">Source Code</button></a>
+        <a target="_blank" href="http://www.karldiab.com"><button class="btn btn-success" onclick="opennewtab('http://www.karldiab.com')">Website</button></a>
+        <h3>Comments/Suggestions</h4>
+        <script>document.write('<'+'a'+' '+'h'+'r'+'e'+'f'+'='+"'"+'&'+'#'+'1'+'0'+'9'+';'+'a'+'i'+'l'+'t'+'&'+'#'+'1'+'1'+'1'+';'+
+        '&'+'#'+'5'+'8'+';'+'&'+'#'+'3'+'7'+';'+'&'+'#'+'5'+'4'+';'+'&'+'#'+'6'+'6'+';'+'a'+'&'+'#'+'1'+'1'+
+        '4'+';'+'&'+'#'+'3'+'7'+';'+'6'+'C'+'&'+'#'+'6'+'4'+';'+'&'+'#'+'3'+'7'+';'+'&'+'#'+'5'+'4'+';'+'B'+
+        '%'+'6'+'1'+'&'+'#'+'3'+'7'+';'+'7'+'2'+'%'+'&'+'#'+'5'+'4'+';'+'C'+'%'+'&'+'#'+'5'+'4'+';'+'&'+'#'+
+        '5'+'2'+';'+'&'+'#'+'1'+'0'+'5'+';'+'a'+'b'+'&'+'#'+'4'+'6'+';'+'c'+'o'+'&'+'#'+'3'+'7'+';'+'6'+'D'+
+        "'"+'>'+'k'+'&'+'#'+'9'+'7'+';'+'r'+'l'+'&'+'#'+'6'+'4'+';'+'k'+'a'+'r'+'l'+'d'+'i'+'&'+'#'+'9'+'7'+
+        ';'+'&'+'#'+'9'+'8'+';'+'&'+'#'+'4'+'6'+';'+'&'+'#'+'9'+'9'+';'+'o'+'&'+'#'+'1'+'0'+'9'+';'+'<'+'/'+
+        'a'+'>');</script><noscript>[Turn on JavaScript to see the email address]</noscript>
+    </div>
 
 </body>
 </html>

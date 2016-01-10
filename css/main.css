@@ -11,37 +11,60 @@ body
 div#ThreeJS {
     left: 0px;
 }
-
+div#screenTooSmall {
+    display: none;
+}
+@media screen and (max-width: 560px) {
+    div#screenTooSmall {
+        display: block;
+        position: absolute;
+        background-color: black;
+        color: white;
+        padding-top: 10%;
+        width: 100%;
+        height: 100%;
+        z-index:10;
+    }
+}
 div#controls {
 	border-style: solid;
 	border-width: 3px;
 	background-color: white;
-    position: fixed;
+    position: absolute;
     left: 0;
-    top: 40px;
-	height: 100%;
-	width: 270px;
+    top: 12%;
+	height: 88%;
+	width: 230px;
     overflow-y: auto;
     pointer-events: inherit;
+    padding-bottom: 5px;
 }
 div#controls button {
     margin: 2px;
 }
 div#points {
-	padding: 10px;
+	padding: 0px;
 	border-style: solid;
 	border-width: 3px;
 	background-color: white;
-    position: fixed;
+    position: absolute;
     right: 0;
-	height: 100%;
-    top: 40px;
-	width: 300px;
+	height: 88%;
+    top: 12%;
+	width: 255px;
     overflow-y: auto;
+    padding-bottom: 5px;
+}
+@media screen and (max-height: 290px) {
+    div#points,
+    div#controls {
+	height: 88%;
+    top: 40px;
+    }
 }
 select#pointsOutput {
 	overflow: auto;
-	width: 80%;
+	width: 85%;
 }
 div#authorInfo {
 	position: fixed;
@@ -51,7 +74,7 @@ div#authorInfo {
 }
 div#title {
     position: absolute;
-    top: 10px;
+    top: 0;
     width: 100%;
     text-align: center;
     color: white;        
@@ -72,4 +95,7 @@ div#logo {
 	position: absolute;
     top: 4px;
     left: 4px;
+}
+h1 {
+    margin: 3px;
 }
